@@ -11,12 +11,15 @@ requirejs.config({
         backbone: 'backbone',
         text: 'text',
         apps:'../apps'
+    },
+
+    shim: {
+        'backbone': ['jquery', 'underscore']
     }
 });
 
 // Start loading the main app file. Put all of
 // your application logic in there.
-requirejs(['apps/helloworld/main'], function(hello_app){
-    console.log('hello_app', hello_app);
-    hello_app.init();
+requirejs(['apps/trackable_table/widget'], function(widget){
+    widget.init();
 });
