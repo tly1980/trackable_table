@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "grunt-html2json": {
-      "version": "0.1.0"
+      "version": "0.1.2"
     },
     "grunt-shell": {
       "version": "0.1.3"
