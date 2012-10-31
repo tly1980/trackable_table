@@ -11,7 +11,6 @@ define(['jquery',
     //     { text: 'Header 3', key: 'header3'},
     //     { text: 'Header 4', key: 'header4'}
     // ]);
-    
 
     var _headers = {
         header1: 'Header 1',
@@ -64,7 +63,7 @@ define(['jquery',
         },
 
         initialize: function(){
-            _rows.bind('change',  this.render, this);
+            _rows.bind('reset',  this.render, this);
         },
 
         render: function() {
@@ -90,8 +89,9 @@ define(['jquery',
                 html += '<tr>'; // tr starts
                 _.each(_headers, function(value, key){
                     html += '<td>'; // td
-                    console.log('key:', key, ' value:', value);
-                    console.log('r', r);
+                    //console.log('key:', key, ' value:', value);
+                    //console.log('r', r);
+
                     html += r[key];
                     html += '</td>';
                 });
@@ -105,9 +105,23 @@ define(['jquery',
 
     return {
         datatable: new DataTable(),
+
         init:function(){
             console.log('trackable_table widget init');
+        },
+
+        url: function(new_url){
+           _rows.url = new_url;
+        },
+
+        colums: function(header){
+            _headers = header;
+        },
+
+        fetch: function(){
+            _rows.fetch();
         }
+
     };
 
 });

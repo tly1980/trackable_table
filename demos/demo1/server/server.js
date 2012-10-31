@@ -28,6 +28,13 @@ var product_data = [
         }
 ];
 
+var log_data = [{
+    action: 'init',
+    operator: 'someone',
+    timestamp: '2012-10-12 14:30',
+    description: 'initialize'
+}];
+
 var http = require('http');
 http.createServer(function (req, res) {
   //console.log('req', req);
@@ -35,7 +42,11 @@ http.createServer(function (req, res) {
       res.writeHead(200, {"Content-Type": "application/json"});
       res.end(JSON.stringify(product_data));
 
-  }else{
+  }else if(req.url === '/res/logs'){
+      res.writeHead(200, {"Content-Type": "application/json"});
+      res.end(JSON.stringify(log_data));
+
+  } else{
       res.writeHead(200, {"Content-Type": "text"});
       res.end('Hello World\n');
   }
