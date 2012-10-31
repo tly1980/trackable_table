@@ -10,11 +10,8 @@ requirejs.config({
         underscore: 'underscore',
         backbone: 'backbone',
         text: 'text',
-        apps:'../apps'
-    },
-
-    shim: {
-        'backbone': ['jquery', 'underscore']
+        apps:'../apps',
+        mustache: 'mustache'
     }
 });
 
@@ -22,4 +19,6 @@ requirejs.config({
 // your application logic in there.
 requirejs(['apps/trackable_table/widget'], function(widget){
     widget.init();
+    $('div.dt_placeholder').append(
+        widget.datatable.render().$el.addClass('table'));
 });

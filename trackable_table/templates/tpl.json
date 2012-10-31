@@ -1,4 +1,3 @@
 {
-	"a": "aaaaaaa111111",
-	"b": "bbbb"
+	"td": "<td>{{td_val}}</td>"
 }
