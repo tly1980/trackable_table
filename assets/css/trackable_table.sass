@@ -1,15 +1,19 @@
-$changeable_background_color: #BDD8DA
-$changeable_front_color:      #003366
-$unchangeable_front_color:    #999999
+$changeable_bg_color: #BDD8DA
+$changeable_fg_color:      #003366
+$unchangeable_fg_color:    #999999
+$changed_bg_color:				  #FFD1B2
 
 div.trackable_dt_table
-    table.table
-        td
-            cursor: default
-            color: $unchangeable_front_color
+	table.table
+		td
+			cursor: default
+			color: $unchangeable_fg_color
 
-            &.changeable
-                color:  $changeable_front_color
-                &:hover
-                    cursor: text
-                    background-color: $changeable_background_color
+			&.changeable
+				color:  $changeable_fg_color
+				&:hover
+					cursor: text
+					background-color: $changeable_bg_color
+				&[change_cid]
+					background-color: $changed_bg_color
+

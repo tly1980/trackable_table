@@ -14,10 +14,12 @@ define(['jquery',
 
     var _header_cfg ;
 
+    var ret_obj = {
+        changes: new Backbone.Collection([]),
+        rows: new Backbone.Collection([])
+    };
 
 
-    var _changes = new Backbone.Collection([
-    ]);
 
     function header_defaultcfg(headers){
         _.each(headers, function(value, key){
@@ -37,40 +39,88 @@ define(['jquery',
     var InputView = Backbone.View.extend({
 
         events: {
-            "keyup input": "input_keyup"
+            "keyup input": "input_keyup",
+            "blur input": "input_blur"
+        },
+
+        input_blur: function(event){
+            var new_value = this.model.get('new_value');
+            var origin_value = this.model.get('origin_value');
+            var current_value = origin_value;
+            if ( new_value !== undefined ){
+                current_value = new_value;
+            }
+             this.freeze_value(current_value);
         },
 
         input_keyup: function(event){
-            if (event.keyCode === 27 ){
-                this.freeze_value(
-                    this.model.get('origin_data'));
+            var input_value = this.$('input').val();
+            var origin_value = this.model.get('origin_value');
+            var new_value = this.model.get('new_value');
+            var current_value = origin_value;
+            if ( new_value !== undefined ){
+                current_value = new_value;
             }
-            console.log('event', event);
+
+            console.log('keyCode', event.keyCode);
+
+            //modifying a never changed cell
+            if ( event.keyCode === 27 ){
+                this.freeze_value(current_value);
+            }
+
+            if ( event.keyCode === 13 ) {
+                if ( input_value === origin_value ){
+                    console.log('aaa', this.$el.parent().attr('change_cid'));
+                    //this.$el.parent().attr('change_cid');
+                    this.$el.parent().removeAttr('change_cid');
+                    ret_obj.changes.remove(this.model);
+                }
+
+                if ( current_value !== input_value && origin_value !== input_value ){
+                    this.model.set('new_value', input_value);
+                    if (ret_obj.changes.getByCid(this.model.cid) === undefined){
+                        ret_obj.changes.push(this.model);
+                        this.$el.parent().attr('change_cid', this.model.cid);
+                    }
+                }
+
+                this.freeze_value(input_value);
+            }
+            //console.log('event', event, this.$el.parent());
         },
 
         recover: function(){
         },
 
+        //freeze_value will remove the $el of this field
         freeze_value: function(value){
             console.log('freeze_value, model', this.model.toJSON());
+
             var html = Mustache.render(
                 this.model.get('tpl'),
-                { val: this.model.get('origin_data') });
-            this.$el.replaceWith(html);
+                { val: value });
+            this.$el.parent().html(html);
         },
 
         render: function(){
-            var html = '<input value="' + this.model.get('origin_data') + '"/>';
+            var html, new_value;
+            input_value = this.model.get('origin_value');
+            new_value = this.model.get('new_value');
+            console.log('new_value', new_value);
+            if ( new_value !== undefined ){
+                input_value = new_value;
+            }
+            html = '<input value="' + input_value + '"/>';
             this.$el.html(html);
             return this;
         }
     });
 
-    function origin_val($elem){
-        var cid = $elem.parent().attr('cid');
-        return this.collection.getByCid(cid);
-        //_rows[]
-    }
+
+    var ChangeSetView = Backbone.View.extend({
+        collection: ret_obj.changes
+    });
 
     var DataTable = Backbone.View.extend({
 
@@ -84,15 +134,21 @@ define(['jquery',
         dblclick_td: function(event){
             var $target_elem = $(event.currentTarget);
             var cid = $target_elem.parent().attr('cid');
+            var change_cid = $target_elem.attr('change_cid');
             var field = $target_elem.attr('field');
             var row_model = this.collection.getByCid(cid);
             var tpl = _headers[field].tpl;
+            var change;
             
-            var change = new Backbone.Model({
-              origin_data: row_model.get(field),
-              field: field,
-              tpl: tpl
-            });
+            if ( change_cid === undefined ){
+                change = new Backbone.Model({
+                  origin_value: row_model.get(field),
+                  field: field,
+                  tpl: tpl
+                });
+            } else {
+                change = ret_obj.changes.getByCid(change_cid);
+            }
 
             var input = new InputView({
                 model: change
@@ -148,23 +204,23 @@ define(['jquery',
 
     });
 
-    return {
-        
-        init:function(columns, new_url){
-            this.rows = new (Backbone.Collection.extend({
-                url: new_url
-            }))();
-            this.datatable = new DataTable({collection: this.rows});
-            _headers = columns;
-            header_defaultcfg(_headers);
-            //this.rows.url = new_url;
-            console.log('trackable_table widget init');
-        },
+    ret_obj.init = function(columns, new_url, change_url){
+        this.rows.url = new_url;
+        this.changes.url = change_url;
 
-        fetch: function(){
-            this.rows.fetch();
-        }
-
+        this.datatable = new DataTable({collection: this.rows});
+        this.changeset_view = new ChangeSetView({
+            collection: this.changes
+        });
+        _headers = columns;
+        header_defaultcfg(_headers);
+        //this.rows.url = new_url;
+        //console.log('trackable_table widget init');
     };
 
+    ret_obj.fetch = function(){
+        this.rows.fetch();
+    };
+
+    return ret_obj;
 });
