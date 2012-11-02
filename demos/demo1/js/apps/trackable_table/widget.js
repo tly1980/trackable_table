@@ -44,6 +44,7 @@ define(['jquery',
         },
 
         input_blur: function(event){
+            return;
             var new_value = this.model.get('new_value');
             var origin_value = this.model.get('origin_value');
             var current_value = origin_value;
@@ -154,7 +155,8 @@ define(['jquery',
                 model: change
             });
             //$target_elem.empty();
-            $target_elem.html(input.render().$el);
+            var width = $target_elem.width() - 10;
+            $target_elem.html(input.render().$el.width(width));
             input.$('input').focus();
             //console.log('change', change.toJSON());
         },

@@ -1,0 +1,10 @@
+div.trackable_dt_table table.table td {
+  cursor: default;
+  color: #999999; }
+  div.trackable_dt_table table.table td.changeable {
+    color: #003366; }
+    div.trackable_dt_table table.table td.changeable:hover {
+      cursor: text;
+      background-color: #bdd8da; }
+    div.trackable_dt_table table.table td.changeable[change_cid] {
+      background-color: #ffd1b2; }
