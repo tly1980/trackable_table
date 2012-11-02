@@ -1,0 +1,15 @@
+$changeable_background_color: #BDD8DA
+$changeable_front_color:      #003366
+$unchangeable_front_color:    #999999
+
+div.trackable_dt_table
+    table.table
+        td
+            cursor: default
+            color: $unchangeable_front_color
+
+            &.changeable
+                color:  $changeable_front_color
+                &:hover
+                    cursor: text
+                    background-color: $changeable_background_color
