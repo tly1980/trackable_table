@@ -19,14 +19,14 @@ requirejs.config({
 // your application logic in there.
 requirejs(['apps/trackable_table/widget'], function(widget){
     widget.init({
-        name:         {text: 'Product Name', changeable:true},
-        unit_price:   {text: 'Unit Price', tpl: '${{val}}'},
-        buying_price: {text: 'Buying Price', tpl: '${{val}}', changeable: true},
-        sold_count:   {text: 'Sold Count', changeable:true}
+        name:         {text: 'Product Name', changeable:true, width: '55%'},
+        unit_price:   {text: 'Unit Price', tpl: '${{val}}', width:'15%'},
+        buying_price: {text: 'Buying Price', tpl: '${{val}}', changeable: true, width:'15%'},
+        sold_count:   {text: 'Sold Count', changeable:true, width:'15%'}
     }, '/res/product_info');
 
     $('div.dt_placeholder').append(
-        widget.datatable.$el);
+        widget.layout_view.$el);
 
     widget.fetch();
 });

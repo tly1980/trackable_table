@@ -8,3 +8,13 @@ div.trackable_dt_table table.table td {
       background-color: #bdd8da; }
     div.trackable_dt_table table.table td.changeable[change_cid] {
       background-color: #ffd1b2; }
+    div.trackable_dt_table table.table td.changeable div.input_div {
+      width: auto;
+      margin-top: 2px;
+      margin-bottom: 2px;
+      margin-left: 5px;
+      margin-right: 5px; }
+      div.trackable_dt_table table.table td.changeable div.input_div input {
+        width: 100%;
+        padding: 0;
+        margin: 0; }

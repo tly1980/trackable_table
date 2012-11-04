@@ -11,9 +11,23 @@ div.trackable_dt_table
 
 			&.changeable
 				color:  $changeable_fg_color
+
 				&:hover
 					cursor: text
 					background-color: $changeable_bg_color
 				&[change_cid]
 					background-color: $changed_bg_color
+
+				div.input_div
+					width: auto
+					margin:
+						top: 2px
+						bottom: 2px
+						left: 5px
+						right: 5px
+					input
+						width: 100%
+						padding: 0
+						margin: 0
+
 

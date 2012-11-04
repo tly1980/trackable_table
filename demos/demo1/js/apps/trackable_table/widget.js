@@ -5,38 +5,72 @@ define(['jquery',
         'text!./templates/tpl.json'],
     function ($, _, Backbone, Mustache, tpl) {
 
-    var _headers = {
-        header1: 'Header 1',
-        header2: 'Header 2',
-        header3: 'Header 3',
-        header4: 'Header 4'
-    };
-
-    var _header_cfg ;
-
     var ret_obj = {
+        columns: {
+            header1: 'Header 1',
+            header2: 'Header 2',
+            header3: 'Header 3',
+            header4: 'Header 4'
+        },
+
+        tpl: JSON.parse(tpl),
+
         changes: new Backbone.Collection([]),
-        rows: new Backbone.Collection([])
+        rows: new Backbone.Collection([]),
+
+        init_columns: function(){
+            var that = this;
+            var width = Math.round( 100 / _.keys(that.columns).length ) + '%';
+            _.each(that.columns, function(value, key){
+                that.columns[key] =  $.extend({
+                    text: 'Un-Titled',
+                    tpl: '{{val}}',
+                    changeable: false,
+                    extra_cls: [],
+                    width: width
+                }, value);
+
+                if (that.columns[key].changeable === true ){
+                    that.columns[key].extra_cls.push('changeable');
+                }
+            });
+
+            console.log('columns:', this.columns);
+        }
     };
 
+    var LayoutView = Backbone.View.extend({
 
+        className: 'row layout_view',
+        tagName: 'div',
 
-    function header_defaultcfg(headers){
-        _.each(headers, function(value, key){
-            headers[key] =  $.extend({
-                text: 'Un-Titled',
-                tpl: '{{val}}',
-                changeable: false,
-                extra_cls: []
-            }, value);
+        initialize: function(){
+            ret_obj.changes.bind('add', this.adjust, this);
+            ret_obj.changes.bind('remove', this.adjust, this);
+        },
 
-            if (headers[key].changeable === true ){
-                headers[key].extra_cls.push('changeable');
+        render: function(){
+            console.log('tpl', ret_obj.tpl);
+            this.$el.html(ret_obj.tpl.layout_view);
+            return this;
+        },
+
+        adjust: function(){
+            if ( ret_obj.changes.length > 0 ){
+                this.$('.datatable_placeholder').removeClass('span12');
+                this.$('.datatable_placeholder').addClass('span9');
+                this.$('.changetable_placeholder').show();
+            }else{
+                this.$('.changetable_placeholder').hide();
+                this.$('.datatable_placeholder').removeClass('span9');
+                this.$('.datatable_placeholder').addClass('span12');
             }
-        });
-    }
+        }
+    });
 
     var InputView = Backbone.View.extend({
+
+        className: 'input_div',
 
         events: {
             "keyup input": "input_keyup",
@@ -45,6 +79,7 @@ define(['jquery',
 
         input_blur: function(event){
             return;
+            //return; //uncomment this line if you dont want to be confused by blur.
             var new_value = this.model.get('new_value');
             var origin_value = this.model.get('origin_value');
             var current_value = origin_value;
@@ -63,7 +98,7 @@ define(['jquery',
                 current_value = new_value;
             }
 
-            console.log('keyCode', event.keyCode);
+            //console.log('keyCode', event.keyCode);
 
             //modifying a never changed cell
             if ( event.keyCode === 27 ){
@@ -96,7 +131,7 @@ define(['jquery',
 
         //freeze_value will remove the $el of this field
         freeze_value: function(value){
-            console.log('freeze_value, model', this.model.toJSON());
+            //console.log('freeze_value, model', this.model.toJSON());
 
             var html = Mustache.render(
                 this.model.get('tpl'),
@@ -108,7 +143,7 @@ define(['jquery',
             var html, new_value;
             input_value = this.model.get('origin_value');
             new_value = this.model.get('new_value');
-            console.log('new_value', new_value);
+            //console.log('new_value', new_value);
             if ( new_value !== undefined ){
                 input_value = new_value;
             }
@@ -138,7 +173,7 @@ define(['jquery',
             var change_cid = $target_elem.attr('change_cid');
             var field = $target_elem.attr('field');
             var row_model = this.collection.getByCid(cid);
-            var tpl = _headers[field].tpl;
+            var tpl = ret_obj.columns[field].tpl;
             var change;
             
             if ( change_cid === undefined ){
@@ -155,8 +190,8 @@ define(['jquery',
                 model: change
             });
             //$target_elem.empty();
-            var width = $target_elem.width() - 10;
-            $target_elem.html(input.render().$el.width(width));
+            //var width = $target_elem.width() - 10;
+            $target_elem.html(input.render().$el);
             input.$('input').focus();
             //console.log('change', change.toJSON());
         },
@@ -173,8 +208,8 @@ define(['jquery',
 
         render_thead: function(){
             var html = '<thead>';
-            _.each(_headers, function(value, key){
-                html += '<th>' + value.text +' </th>';
+            _.each(ret_obj.columns, function(value, key){
+                html += Mustache.render('<th style="width:{{width}};">{{text}}</th>', value);
             });
 
             html += '</thead>';
@@ -185,7 +220,7 @@ define(['jquery',
             var html = '<tbody>';  //tbody starts
             this.collection.each( function(r, i){
                 html += '<tr cid="' + r.cid + '" >'; // tr starts
-                _.each(_headers, function(value, key){
+                _.each(ret_obj.columns, function(value, key){
 
                     html += '<td field="' + key + '" class="' +
                             value.extra_cls.join(',') + '">'; // td
@@ -210,14 +245,20 @@ define(['jquery',
         this.rows.url = new_url;
         this.changes.url = change_url;
 
+        this.layout_view = new LayoutView();
+
         this.datatable = new DataTable({collection: this.rows});
         this.changeset_view = new ChangeSetView({
             collection: this.changes
         });
-        _headers = columns;
-        header_defaultcfg(_headers);
-        //this.rows.url = new_url;
-        //console.log('trackable_table widget init');
+        this.columns = columns;
+        this.init_columns();
+
+        this.layout_view.render();
+        this.layout_view.$('.datatable_placeholder').append(
+            this.datatable.$el);
+        this.layout_view.$('.changetable_placeholder').append(
+            this.changes.$el);
     };
 
     ret_obj.fetch = function(){

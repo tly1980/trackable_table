@@ -1,3 +1,4 @@
 {
+	"layout_view": "<div class=\"datatable_placeholder span12\"></div>\n<div class=\"changetable_placeholder span3\"></div>\n",
 	"td": "<td>{{td_val}}</td>"
 }
