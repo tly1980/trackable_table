@@ -1,13 +1,18 @@
-$changeable_bg_color: #BDD8DA
+$changeable_hover_bg_color:  #BDD8DA
 $changeable_fg_color:      #003366
 $unchangeable_fg_color:    #999999
 $changed_bg_color:				  #FFD1B2
-$changeset_li_hover_bg_color: #f5f5f5
+$changeset_li_hover_bg_color: white
 $nicelookinig_gray:	#E1E1E8	
 
 // radius
 $radius-medium: 8px
 $radius-small: 4px
+
+@mixin line_shadow
+	-webkit-box-shadow: 0px 3px 5px rgba(50, 50, 50, 0.75)
+	-moz-box-shadow:    0px 3px 5px rgba(50, 50, 50, 0.75)
+	box-shadow:         0px 3px 5px rgba(50, 50, 50, 0.75)
 
 div.layout_view
 	background-color: #F7F7F9
@@ -33,9 +38,15 @@ div.trackable_dt_table
 
 				&:hover
 					cursor: text
-					background-color: $changeable_bg_color
+					background-color: $changeable_hover_bg_color
 				&[change_cid]
 					background-color: $changed_bg_color
+					&.highlight
+						color: white
+						text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25)
+						background-color: #49AFCD
+						text-decoration: underline
+
 
 				div.input_div
 					width: auto
@@ -75,7 +86,8 @@ div.changeset_placeholder
 		p.changeset_title
 			text-align: right
 		ul
-			background-color: white
+			background-color: #E6E6EB
+			border: 1px solid $nicelookinig_gray
 			overflow: scroll
 			-webkit-border-radius: $radius-small
 			-moz-border-radius: $radius-small
@@ -90,6 +102,11 @@ div.changeset_placeholder
 					-webkit-border-radius: $radius-small
 					-moz-border-radius: $radius-small
 					border-radius: $radius-small
+					@include line_shadow
+					background-color:	#F7F7F9
+
+					&.highlight
+						background-color: rgba(73, 175, 205, 0.26)
 
 					&:hover
 						background-color: $changeset_li_hover_bg_color

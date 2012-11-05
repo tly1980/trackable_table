@@ -1,6 +1,6 @@
 {
 	"changeset_item": "<li cid=\"{{cid}}\">\n<div class=\"the_change\">\n\t<p class=\"field_text\">{{field_text}}</p>\n\t<p class=\"text-info\">{{new_value}}</p>\n\t<p class=\"muted\">{{origin_value}}</pl>\n\t<div class=\"btn_set\">\n\t\t<a href=\"#\" class=\"icon-search\"></a>\n\t\t<a href=\"#\" class=\"icon-remove-sign\"></a>\n\t</div>\n</div>\n</li>",
-	"changeset_view": "<div class=\"btn_set_changeview\">\n\t<a href=\"#\" class=\"icon-ok\"></a>\n\t<a href=\"#\" class=\"icon-remove\"></a>\n</div>\n<p class=\"changeset_title\"><span class=\"label label-info\">Change Sets</span></p>\n<ul class=\"unstyled\">\n</ul>\n",
+	"changeset_view": "<div class=\"btn_set_changeview\">\n\t<a href=\"#\" class=\"icon-ok\"></a>\n\t<a href=\"#\" class=\"icon-remove\"></a>\n</div>\n<p class=\"changeset_title\"><span class=\"label label-warning\">Change Sets</span></p>\n<ul class=\"unstyled\">\n</ul>\n",
 	"layout_view": "<div class=\"datatable_placeholder\"></div>\n<div class=\"changeset_placeholder\"></div>\n",
 	"td": "<td>{{td_val}}</td>"
 }

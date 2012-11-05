@@ -2,8 +2,9 @@ define(['jquery',
         'underscore',
         'backbone',
         'mustache',
-        'text!./templates/tpl.json'],
-    function ($, _, Backbone, Mustache, tpl) {
+        'text!./templates/tpl.json'
+        ],
+    function ($, _, Backbone, Mustache, PubSub, tpl) {
 
     var ret_obj = {
         columns: {
@@ -94,7 +95,6 @@ define(['jquery',
         },
 
         input_blur: function(event){
-            return;
             //return; //uncomment this line if you dont want to be confused by blur.
             var new_value = this.model.get('new_value');
             var origin_value = this.model.get('origin_value');
@@ -171,24 +171,40 @@ define(['jquery',
 
 
     var ChangeSetView = Backbone.View.extend({
-        className: 'changeset_view alert alert-info',
+        className: 'changeset_view alert',
 
         events: {
-            "click a.icon-remove": "click_remove",
-            "click a.icon-search": "click_search"
+            "click a.icon-remove-sign": "click_remove",
+            "click a.icon-search": "click_search",
+            "click a.icon-zoom-out": "click_zoomout"
         },
 
         click_remove: function(event){
+            
             var $target_elem = $(event.currentTarget);
             var cid = $target_elem.parents('[cid]').attr('cid');
-
-            var the_model = this.collection.getByCid(cid);
-
-            //console.log('click_remove', the_model.toJSON());
-            this.collection.remove([the_model]);
+            var the_change = this.collection.getByCid(cid);
+            console.log('click_remove', $target_elem);
+            this.collection.remove([the_change]);
         },
 
         click_search: function(event){
+            console.log('click_search');
+            var $target_elem = $(event.currentTarget);
+            var cid = $target_elem.parents('[cid]').attr('cid');
+            var the_change = this.collection.getByCid(cid);
+            console.log('$target_elem', $target_elem);
+
+            // $target_elem.removeClass(
+            //     'icon-search').addClass('icon-zoom-out');
+            // console.log('icon-search',
+            //     $target_elem.hasClass('icon-search'), $target_elem);
+            // change the highlight value, signal dataTableView
+            the_change.set('highlight', new Date());
+            $target_elem.text('asdf');
+        },
+
+        click_zoomout: function(event){
 
         },
 
@@ -218,24 +234,24 @@ define(['jquery',
             return ret;
         },
 
-        change_one: function(the_model){
-            var html = this.render_one(the_model);
+        change_one: function(the_change){
+            var html = this.render_one(the_change);
             this.$(
-                '[cid=' + the_model.cid+ ']').replaceWith(html);
+                '[cid=' + the_change.cid+ ']').replaceWith(html);
         },
 
-        add_one: function(the_model){
+        add_one: function(the_change){
             //console.log('the_model', the_model.toJSON());
-            var html = this.render_one(the_model);
-            the_model.bind('change', this.change_one, this);
+            var html = this.render_one(the_change);
+            the_change.bind('change', this.change_one, this);
             this.$('ul').append(html);
         },
 
-        remove: function(the_model){
-            //console.log('remove called', the_model.toJSON());
-            this.unbind('change', the_model);
+        remove: function(the_change){
+            console.log('remove called', the_change.toJSON());
+            this.unbind('change', the_change);
             this.$(
-                '[cid=' + the_model.cid+ ']').remove();
+                '[cid=' + the_change.cid+ ']').remove();
         },
 
         render: function(){
@@ -255,7 +271,12 @@ define(['jquery',
         className: "trackable_dt_table",
 
         events: {
-            "dblclick td.changeable":   "dblclick_td"
+            "dblclick td.changeable":   "dblclick_td",
+            "click":                    "single_click"
+        },
+
+        single_click: function(event){
+            this.$('.highlight').removeClass('.highlight');
         },
 
         recover_one: function(the_change){
@@ -264,7 +285,18 @@ define(['jquery',
             var html = Mustache.render(
                 the_change.get('tpl'),
                 {val: the_change.get('origin_value')});
+            $targe_elem.removeClass('highlight');
             $targe_elem.html(html).removeAttr('change_cid');
+            the_change.off('change:highlight', this.highlight, this);
+        },
+
+        listen_change: function(the_change){
+            the_change.bind('change:highlight', this.highlight, this);
+        },
+
+        highlight: function(the_change){
+            this.$('.highlight').removeClass('highlight');
+            this.$('[change_cid=' + the_change.cid+']').addClass('highlight');
         },
 
         dblclick_td: function(event){
@@ -365,6 +397,9 @@ define(['jquery',
 
         this.layout_view.render();
         this.changeset_view.render();
+
+        this.changes.bind('add',
+            this.datatable.listen_change, this.datatable);
 
         this.changes.bind('remove',
             this.datatable.recover_one, this.datatable);
