@@ -41,7 +41,7 @@ define(['jquery',
 
     var LayoutView = Backbone.View.extend({
 
-        className: 'row layout_view',
+        className: 'layout_view',
         tagName: 'div',
 
         initialize: function(){
@@ -56,14 +56,30 @@ define(['jquery',
         },
 
         adjust: function(){
-            if ( ret_obj.changes.length > 0 ){
-                this.$('.datatable_placeholder').removeClass('span12');
-                this.$('.datatable_placeholder').addClass('span9');
-                this.$('.changeset_placeholder').show();
-            }else{
-                this.$('.changeset_placeholder').hide();
-                this.$('.datatable_placeholder').removeClass('span9');
-                this.$('.datatable_placeholder').addClass('span12');
+            var el_width = this.$el.width();
+            var $chgset_pholder = this.$('.changeset_placeholder');
+            var $dt_pholder = this.$('.datatable_placeholder');
+
+            var new_width;
+
+
+            if ( ret_obj.changes.length > 0 && $chgset_pholder.css('display') !== 'block'){
+                new_width = el_width - $chgset_pholder.outerWidth(
+                    ) - $chgset_pholder.css(
+                    'marginLeft').replace("px", "") - $dt_pholder.css(
+                    'marginRight').replace("px", "") - $dt_pholder.css('marginLeft').replace("px", "");
+
+                console.log('show~!');
+                this.$('.changeset_placeholder').fadeIn('fast');
+                $dt_pholder.width(new_width);
+            }
+
+            if ( ret_obj.changes.length <= 0 ){
+                new_width = el_width - $dt_pholder.css('marginLeft').replace(
+                    'px', '') -  $dt_pholder.css('marginRight').replace(
+                    'px', '');
+                this.$('.changeset_placeholder').fadeOut('fast');
+                $dt_pholder.width(new_width);
             }
         }
     });
@@ -155,10 +171,11 @@ define(['jquery',
 
 
     var ChangeSetView = Backbone.View.extend({
-        className: 'changeset_view',
+        className: 'changeset_view alert alert-info',
 
         events: {
-            "click a.icon-remove": "click_remove"
+            "click a.icon-remove": "click_remove",
+            "click a.icon-search": "click_search"
         },
 
         click_remove: function(event){
@@ -171,6 +188,10 @@ define(['jquery',
             this.collection.remove([the_model]);
         },
 
+        click_search: function(event){
+
+        },
+
         initialize: function(){
             this.collection.bind('add', this.add_one, this);
             this.collection.bind('remove', this.remove, this);
@@ -181,12 +202,16 @@ define(['jquery',
                 {val: the_model.get('new_value')});
             var origin_value = Mustache.render(the_model.get('tpl'),
                 {val: the_model.get('origin_value')});
+            var field = the_model.get('field');
+
+            var field_text = ret_obj.columns[field].text;
 
             var ret = Mustache.render(
                 ret_obj.tpl.changeset_item, {
                     cid: the_model.cid,
                     new_value:new_value,
-                    origin_value:origin_value
+                    origin_value:origin_value,
+                    field_text: field_text
                 });
 
             //console.log('render_one', ret);
@@ -217,6 +242,9 @@ define(['jquery',
             //console.log('tpl', ret_obj.tpl.changeset_view);
             this.$el.html(
                 ret_obj.tpl.changeset_view);
+            this.$el.height(ret_obj.height);
+            var ul_height = ret_obj.height - this.$('p.changeset_title').outerHeight() - 40;
+            this.$('ul').height(ul_height);
             return this;
         }
     });
@@ -275,6 +303,7 @@ define(['jquery',
         render: function() {
             var tbl_html = '<table class="table table-condensed table-hover">' + this.render_thead() + this.render_tbody() + '</tbody>';
             this.$el.html(tbl_html);
+            this.$el.height(ret_obj.height);
             return this;
         },
 
@@ -313,7 +342,11 @@ define(['jquery',
 
     });
 
-    ret_obj.init = function(columns, new_url, change_url){
+    ret_obj.init = function(columns, new_url, change_url, height){
+        if (height === undefined){
+            height = 400;
+        }
+        this.height = height;
         this.rows.url = new_url;
         this.changes.url = change_url;
 
@@ -324,6 +357,8 @@ define(['jquery',
         this.changeset_view = new ChangeSetView({
             collection: this.changes
         });
+
+
 
         this.columns = columns;
         this.init_columns();

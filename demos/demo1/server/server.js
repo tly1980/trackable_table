@@ -28,6 +28,10 @@ var product_data = [
         }
 ];
 
+for (var i=0; i < 5; i++){
+  product_data = product_data.concat(product_data);
+}
+
 var log_data = [{
     action: 'init',
     operator: 'someone',
@@ -38,6 +42,7 @@ var log_data = [{
 var http = require('http');
 http.createServer(function (req, res) {
   //console.log('req', req);
+
   if (req.url === '/res/product_info'){
       res.writeHead(200, {"Content-Type": "application/json"});
       res.end(JSON.stringify(product_data));

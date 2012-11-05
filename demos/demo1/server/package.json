@@ -1,0 +1,7 @@
+{
+  "volo": {
+    "dependencies": {
+      "underscore": "github:documentcloud/underscore/1.4.2"
+    }
+  }
+}
