@@ -167,7 +167,7 @@ define(['jquery',
 
             var the_model = this.collection.getByCid(cid);
 
-            console.log('click_remove', the_model.toJSON());
+            //console.log('click_remove', the_model.toJSON());
             this.collection.remove([the_model]);
         },
 
@@ -214,7 +214,7 @@ define(['jquery',
         },
 
         render: function(){
-            console.log('tpl', ret_obj.tpl.changeset_view);
+            //console.log('tpl', ret_obj.tpl.changeset_view);
             this.$el.html(
                 ret_obj.tpl.changeset_view);
             return this;
@@ -228,6 +228,15 @@ define(['jquery',
 
         events: {
             "dblclick td.changeable":   "dblclick_td"
+        },
+
+        recover_one: function(the_change){
+            var cid = the_change.cid;
+            var $targe_elem = this.$('[change_cid=' + cid + ']');
+            var html = Mustache.render(
+                the_change.get('tpl'),
+                {val: the_change.get('origin_value')});
+            $targe_elem.html(html).removeAttr('change_cid');
         },
 
         dblclick_td: function(event){
@@ -321,6 +330,9 @@ define(['jquery',
 
         this.layout_view.render();
         this.changeset_view.render();
+
+        this.changes.bind('remove',
+            this.datatable.recover_one, this.datatable);
 
         this.layout_view.$('.datatable_placeholder').append(
             this.datatable.$el);
