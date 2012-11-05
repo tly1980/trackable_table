@@ -4,7 +4,7 @@ define(['jquery',
         'mustache',
         'text!./templates/tpl.json'
         ],
-    function ($, _, Backbone, Mustache, PubSub, tpl) {
+    function ($, _, Backbone, Mustache, tpl) {
 
     var ret_obj = {
         columns: {
