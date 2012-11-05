@@ -18,3 +18,31 @@ div.trackable_dt_table table.table td {
         width: 100%;
         padding: 0;
         margin: 0; }
+
+div.changeset_placeholder {
+  display: none; }
+
+div.changeset_view ul li {
+  margin: 2px; }
+  div.changeset_view ul li:hover {
+    background-color: whitesmoke; }
+  div.changeset_view ul li div.row div.the_change {
+    margin: 4px;
+    margin-left: 18px;
+    position: relative; }
+    div.changeset_view ul li div.row div.the_change p {
+      white-space: nowrap;
+      width: auto;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 14px;
+      padding-right: 30px;
+      margin: 0;
+      padding: 2; }
+      div.changeset_view ul li div.row div.the_change p.muted {
+        line-height: 12px;
+        font-size: 10px; }
+    div.changeset_view ul li div.row div.the_change div.btn_set {
+      position: absolute;
+      right: 8px;
+      top: 2px; }

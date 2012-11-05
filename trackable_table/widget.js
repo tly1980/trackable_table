@@ -35,7 +35,7 @@ define(['jquery',
                 }
             });
 
-            console.log('columns:', this.columns);
+            //console.log('columns:', this.columns);
         }
     };
 
@@ -50,7 +50,7 @@ define(['jquery',
         },
 
         render: function(){
-            console.log('tpl', ret_obj.tpl);
+            //console.log('tpl', ret_obj.tpl);
             this.$el.html(ret_obj.tpl.layout_view);
             return this;
         },
@@ -59,9 +59,9 @@ define(['jquery',
             if ( ret_obj.changes.length > 0 ){
                 this.$('.datatable_placeholder').removeClass('span12');
                 this.$('.datatable_placeholder').addClass('span9');
-                this.$('.changetable_placeholder').show();
+                this.$('.changeset_placeholder').show();
             }else{
-                this.$('.changetable_placeholder').hide();
+                this.$('.changeset_placeholder').hide();
                 this.$('.datatable_placeholder').removeClass('span9');
                 this.$('.datatable_placeholder').addClass('span12');
             }
@@ -107,7 +107,7 @@ define(['jquery',
 
             if ( event.keyCode === 13 ) {
                 if ( input_value === origin_value ){
-                    console.log('aaa', this.$el.parent().attr('change_cid'));
+                    //console.log('aaa', this.$el.parent().attr('change_cid'));
                     //this.$el.parent().attr('change_cid');
                     this.$el.parent().removeAttr('change_cid');
                     ret_obj.changes.remove(this.model);
@@ -155,7 +155,70 @@ define(['jquery',
 
 
     var ChangeSetView = Backbone.View.extend({
-        collection: ret_obj.changes
+        className: 'changeset_view',
+
+        events: {
+            "click a.icon-remove": "click_remove"
+        },
+
+        click_remove: function(event){
+            var $target_elem = $(event.currentTarget);
+            var cid = $target_elem.parents('[cid]').attr('cid');
+
+            var the_model = this.collection.getByCid(cid);
+
+            console.log('click_remove', the_model.toJSON());
+            this.collection.remove([the_model]);
+        },
+
+        initialize: function(){
+            this.collection.bind('add', this.add_one, this);
+            this.collection.bind('remove', this.remove, this);
+        },
+
+        render_one: function(the_model){
+            var new_value = Mustache.render(the_model.get('tpl'),
+                {val: the_model.get('new_value')});
+            var origin_value = Mustache.render(the_model.get('tpl'),
+                {val: the_model.get('origin_value')});
+
+            var ret = Mustache.render(
+                ret_obj.tpl.changeset_item, {
+                    cid: the_model.cid,
+                    new_value:new_value,
+                    origin_value:origin_value
+                });
+
+            //console.log('render_one', ret);
+            return ret;
+        },
+
+        change_one: function(the_model){
+            var html = this.render_one(the_model);
+            this.$(
+                '[cid=' + the_model.cid+ ']').replaceWith(html);
+        },
+
+        add_one: function(the_model){
+            //console.log('the_model', the_model.toJSON());
+            var html = this.render_one(the_model);
+            the_model.bind('change', this.change_one, this);
+            this.$('ul').append(html);
+        },
+
+        remove: function(the_model){
+            //console.log('remove called', the_model.toJSON());
+            this.unbind('change', the_model);
+            this.$(
+                '[cid=' + the_model.cid+ ']').remove();
+        },
+
+        render: function(){
+            console.log('tpl', ret_obj.tpl.changeset_view);
+            this.$el.html(
+                ret_obj.tpl.changeset_view);
+            return this;
+        }
     });
 
     var DataTable = Backbone.View.extend({
@@ -201,7 +264,7 @@ define(['jquery',
         },
 
         render: function() {
-            var tbl_html = '<table class="table">' + this.render_thead() + this.render_tbody() + '</tbody>';
+            var tbl_html = '<table class="table table-condensed table-hover">' + this.render_thead() + this.render_tbody() + '</tbody>';
             this.$el.html(tbl_html);
             return this;
         },
@@ -247,18 +310,22 @@ define(['jquery',
 
         this.layout_view = new LayoutView();
 
-        this.datatable = new DataTable({collection: this.rows});
+        this.datatable = new DataTable({
+            collection: this.rows});
         this.changeset_view = new ChangeSetView({
             collection: this.changes
         });
+
         this.columns = columns;
         this.init_columns();
 
         this.layout_view.render();
+        this.changeset_view.render();
+
         this.layout_view.$('.datatable_placeholder').append(
             this.datatable.$el);
-        this.layout_view.$('.changetable_placeholder').append(
-            this.changes.$el);
+        this.layout_view.$('.changeset_placeholder').append(
+            this.changeset_view.$el);
     };
 
     ret_obj.fetch = function(){
