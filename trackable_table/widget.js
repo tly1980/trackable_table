@@ -357,6 +357,8 @@ define(['jquery',
             //console.log('tpl', ret_obj.tpl.changeset_view);
             this.$el.html(
                 ret_obj.tpl.changeset_view);
+            this.$el.append(
+                ret_obj.tpl.confirm_dlg);
             this.adjust_height(false);
             return this;
         }
