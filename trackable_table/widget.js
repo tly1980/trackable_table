@@ -494,7 +494,7 @@ define(['jquery',
         },
 
         render: function() {
-            var tbl_html = '<table class="table table-condensed table-hover">' + this.render_thead() + this.render_tbody() + '</tbody>';
+            var tbl_html = '<table class="table table-condensed">' + this.render_thead() + this.render_tbody() + '</tbody>';
             this.$el.html(tbl_html);
             this.$el.height(ret_obj.height);
             return this;

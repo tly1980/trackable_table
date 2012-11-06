@@ -10,28 +10,30 @@ div.layout_view {
 
 div.trackable_dt_table {
   overflow-y: scroll; }
-  div.trackable_dt_table table.table td {
+  div.trackable_dt_table table.table tbody tr:hover {
+    background-color: #e2f1e2; }
+  div.trackable_dt_table table.table tbody tr td {
     cursor: default;
     color: #999999; }
-    div.trackable_dt_table table.table td.changeable {
+    div.trackable_dt_table table.table tbody tr td.changeable {
       color: #003366; }
-      div.trackable_dt_table table.table td.changeable:hover {
+      div.trackable_dt_table table.table tbody tr td.changeable:hover {
         cursor: text;
         background-color: #bdd8da; }
-      div.trackable_dt_table table.table td.changeable[change_cid] {
-        background-color: #ffd1b2; }
-        div.trackable_dt_table table.table td.changeable[change_cid].highlight {
+      div.trackable_dt_table table.table tbody tr td.changeable[change_cid] {
+        background-color: #e2f1e2; }
+        div.trackable_dt_table table.table tbody tr td.changeable[change_cid].highlight {
           color: white;
           text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
           background-color: #49afcd;
           text-decoration: underline; }
-      div.trackable_dt_table table.table td.changeable div.input_div {
+      div.trackable_dt_table table.table tbody tr td.changeable div.input_div {
         width: auto;
         margin-top: 2px;
         margin-bottom: 2px;
         margin-left: 5px;
         margin-right: 5px; }
-        div.trackable_dt_table table.table td.changeable div.input_div input {
+        div.trackable_dt_table table.table tbody tr td.changeable div.input_div input {
           width: 100%;
           padding: 0;
           margin: 0; }
@@ -98,7 +100,7 @@ div.changeset_placeholder {
               div.changeset_placeholder div.changeset_view div.changet_view_content ul li div.the_change.highlight p.muted {
                 color: gray; }
             div.changeset_placeholder div.changeset_view div.changet_view_content ul li div.the_change:hover {
-              background-color: white; }
+              background-color: #dffadf; }
             div.changeset_placeholder div.changeset_view div.changet_view_content ul li div.the_change p {
               white-space: nowrap;
               width: auto;
