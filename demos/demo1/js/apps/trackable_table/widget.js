@@ -246,7 +246,7 @@ define(['jquery',
                 this.$('ul').position().top - 30;
             console.log('scrollTop: ', top);
 
-            if ( /^ch/.test(the_change.get('highlight')) === false){
+            if ( /^cs/.test(the_change.get('highlight')) === false){
                 this.$('ul').animate({scrollTop: top }, 300);
             }
             //console.log('scroll to 1000', $el );
