@@ -9,7 +9,7 @@ div.layout_view {
   height: auto; }
 
 div.trackable_dt_table {
-  overflow: scroll; }
+  overflow-y: scroll; }
   div.trackable_dt_table table.table td {
     cursor: default;
     color: #999999; }
@@ -65,11 +65,14 @@ div.changeset_placeholder {
       top: 32px;
       right: 10px;
       width: 280px;
-      display: none; }
+      display: none;
+      -webkit-box-shadow: 0px 3px 5px rgba(50, 50, 50, 0.75);
+      -moz-box-shadow: 0px 3px 5px rgba(50, 50, 50, 0.75);
+      box-shadow: 0px 3px 5px rgba(50, 50, 50, 0.75); }
       div.changeset_placeholder div.changeset_view div.changet_view_content ul {
         background-color: #e6e6eb;
         border: 1px solid #e1e1e8;
-        overflow: scroll;
+        overflow-y: scroll;
         -webkit-border-radius: 4px;
         -moz-border-radius: 4px;
         border-radius: 4px;
@@ -88,10 +91,14 @@ div.changeset_placeholder {
             -moz-box-shadow: 0px 3px 5px rgba(50, 50, 50, 0.75);
             box-shadow: 0px 3px 5px rgba(50, 50, 50, 0.75);
             background-color: #f7f7f9; }
+            div.changeset_placeholder div.changeset_view div.changet_view_content ul li div.the_change a:hover {
+              cursor: pointer; }
             div.changeset_placeholder div.changeset_view div.changet_view_content ul li div.the_change.highlight {
               background-color: rgba(73, 175, 205, 0.26); }
               div.changeset_placeholder div.changeset_view div.changet_view_content ul li div.the_change.highlight:hover {
                 background-color: rgba(73, 175, 205, 0.26); }
+              div.changeset_placeholder div.changeset_view div.changet_view_content ul li div.the_change.highlight p.muted {
+                color: gray; }
             div.changeset_placeholder div.changeset_view div.changet_view_content ul li div.the_change:hover {
               background-color: white; }
             div.changeset_placeholder div.changeset_view div.changet_view_content ul li div.the_change p {
@@ -103,7 +110,7 @@ div.changeset_placeholder {
               padding-right: 30px;
               margin: 0;
               padding: 2px;
-              padding-left: 8px; }
+              padding-left: 15px; }
               div.changeset_placeholder div.changeset_view div.changet_view_content ul li div.the_change p.muted {
                 line-height: 12px;
                 font-size: 10px;
@@ -113,9 +120,9 @@ div.changeset_placeholder {
                 text-align: left;
                 text-transform: lowercase;
                 color: black;
-                padding-left: 2px;
+                padding-left: 5px;
                 font-size: bold; }
             div.changeset_placeholder div.changeset_view div.changet_view_content ul li div.the_change div.btn_set {
               position: absolute;
-              right: 0px;
+              right: 5px;
               top: 2px; }

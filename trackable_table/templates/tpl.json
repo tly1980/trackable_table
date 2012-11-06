@@ -1,5 +1,5 @@
 {
-	"changeset_item": "<li cid=\"{{cid}}\">\n<div class=\"the_change\">\n\t<p class=\"field_text\">{{field_text}}</p>\n\t<p class=\"text-info\">{{new_value}}</p>\n\t<p class=\"muted\">{{origin_value}}</pl>\n\t<div class=\"btn_set\">\n\t\t<a href=\"#\" class=\"icon-search\"></a>\n\t\t<a href=\"#\" class=\"icon-remove-sign\"></a>\n\t</div>\n</div>\n</li>",
+	"changeset_item": "<li cid=\"{{cid}}\">\n<div class=\"the_change\">\n\t<p class=\"field_text\">{{field_text}}</p>\n\t<p class=\"text-info\">{{new_value}}</p>\n\t<p class=\"muted\">{{origin_value}}</pl>\n\t<div class=\"btn_set\">\n\t\t<a class=\"icon-search\"></a>\n\t\t<a class=\"icon-zoom-out\" style=\"display:none;\"></a>\n\t\t<a class=\"icon-remove-sign\"></a>\n\t</div>\n</div>\n</li>",
 	"changeset_view": "<button type=\"button\" class=\"btn btn-warning btn-mini changeset_title\" data-toggle=\"button\">Change Sets</button>\n\n<div class=\"changet_view_content alert\">\n\t<div class=\"btn_set_changeview\">\n\t\t<a href=\"#\" class=\"icon-ok\"></a>\n\t\t<a href=\"#\" class=\"icon-remove\"></a>\n\t</div>\n\t<ul class=\"unstyled\">\n\t</ul>\n</div>",
 	"layout_view": "<div class=\"datatable_placeholder\"></div>\n<div class=\"changeset_placeholder\"></div>\n",
 	"td": "<td>{{td_val}}</td>"

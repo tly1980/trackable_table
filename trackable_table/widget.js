@@ -192,7 +192,8 @@ define(['jquery',
             "click a.icon-remove-sign": "click_remove",
             "click a.icon-search": "click_search",
             "click a.icon-zoom-out": "click_zoomout",
-            "click button.changeset_title": "toggle_view"
+            "click button.changeset_title": "toggle_view",
+            "click a.icon-remove": "click_remove_all"
         },
 
         toggle_view: function(event){
@@ -202,6 +203,12 @@ define(['jquery',
                 ret_obj.layoutview_model.set("show_changeset", false);
             }else{
                 ret_obj.layoutview_model.set("show_changeset", true);
+            }
+        },
+
+        click_remove_all: function(event){
+            while(this.collection.length){
+                this.collection.pop();
             }
         },
 
@@ -238,9 +245,12 @@ define(['jquery',
         },
 
         show_changeset: function(the_model){
+            
             if (the_model.get('show_changeset') === true){
+                this.adjust_height(true);
                 this.$('div.changet_view_content').fadeIn('fast');
             }else{
+                this.adjust_height(false);
                 this.$('div.changet_view_content').fadeOut('fast');
             }
         },
@@ -265,12 +275,16 @@ define(['jquery',
         },
 
         highlight: function(the_change){
-            console.log('ChangeSetView::highlight');
+            //console.log('ChangeSetView::highlight');
             var cid = the_change.cid;
-            this.$(
-                '[cid=' + the_change.cid+ '] .the_change').addClass('highlight');
-            
-            var top = this.$('[cid=' + the_change.cid+ '] .the_change').position().top -
+            var $the_change_div = this.$(
+                '[cid=' + the_change.cid+ '] .the_change');
+            $the_change_div.addClass('highlight');
+            console.log($the_change_div.children('a.icon-search'));
+            $the_change_div.find('a.icon-search').hide();
+            $the_change_div.find('a.icon-zoom-out').show();
+
+            var top = $the_change_div.position().top -
                 this.$('ul').position().top - 30;
             console.log('scrollTop: ', top);
 
@@ -282,7 +296,13 @@ define(['jquery',
 
         highlight_dismiss: function(the_change){
             var cid = the_change.cid;
-            console.log('ChangeSetView::highlight_dismiss');
+            var $the_change_div = this.$(
+                '[cid=' + the_change.cid+ '] .the_change');
+
+            //console.log('ChangeSetView::highlight_dismiss');
+            $the_change_div.find('a.icon-search').show();
+            $the_change_div.find('a.icon-zoom-out').hide();
+
             this.$(
                 '[cid=' + the_change.cid+ '] .the_change').removeClass('highlight');
         },
@@ -319,12 +339,14 @@ define(['jquery',
             }else{
                 this.update_changeset_number();
             }
+
         },
 
-        adjust_height: function(){
-            if ( ret_obj.changes.length > 0 ){
+        adjust_height: function(show){
+            var ul_height = ret_obj.height - 40;
+            if ( show ){
                 this.$el.height(ret_obj.height);
-                var ul_height = ret_obj.height - this.$('p.changeset_title').outerHeight() - 40;
+                console.log('ul height', ul_height);
                 this.$('ul').height(ul_height);
             }else{
                 this.$el.height(0);
@@ -335,7 +357,7 @@ define(['jquery',
             //console.log('tpl', ret_obj.tpl.changeset_view);
             this.$el.html(
                 ret_obj.tpl.changeset_view);
-            this.adjust_height();
+            this.adjust_height(false);
             return this;
         }
     });

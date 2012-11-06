@@ -23,7 +23,7 @@ requirejs(['apps/trackable_table/widget'], function(widget){
         unit_price:   {text: 'Unit Price', tpl: '${{val}}', width:'15%'},
         buying_price: {text: 'Buying Price', tpl: '${{val}}', changeable: true, width:'15%'},
         sold_count:   {text: 'Sold Count', changeable:true, width:'15%'}
-    }, '/res/product_info');
+    }, 'product_info');
 
     $('div.dt_placeholder').append(
         widget.layout_view.$el);
