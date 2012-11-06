@@ -46,8 +46,8 @@ define(['jquery',
         tagName: 'div',
 
         initialize: function(){
-            ret_obj.changes.bind('add', this.adjust, this);
-            ret_obj.changes.bind('remove', this.adjust, this);
+            ret_obj.changes.on('add', this.adjust, this);
+            ret_obj.changes.on('remove', this.adjust, this);
         },
 
         render: function(){
@@ -168,7 +168,12 @@ define(['jquery',
             return this;
         }
     });
-
+   
+    // uniq_str('cs') indicate the changes comes from changeset view
+    // uniq_str('dt') indicate the changes comes from datatable view
+    function uniq_str(src){
+        return src + ',' + (new Date()).toISOString();
+    }
 
     var ChangeSetView = Backbone.View.extend({
         className: 'changeset_view alert',
@@ -189,28 +194,25 @@ define(['jquery',
         },
 
         click_search: function(event){
-            console.log('click_search');
             var $target_elem = $(event.currentTarget);
             var cid = $target_elem.parents('[cid]').attr('cid');
             var the_change = this.collection.getByCid(cid);
-            console.log('$target_elem', $target_elem);
 
-            // $target_elem.removeClass(
-            //     'icon-search').addClass('icon-zoom-out');
-            // console.log('icon-search',
-            //     $target_elem.hasClass('icon-search'), $target_elem);
-            // change the highlight value, signal dataTableView
-            the_change.set('highlight', new Date());
-            $target_elem.text('asdf');
+            //uniq_str('cs') indicate the changes comes from changeset view
+            the_change.set('highlight', uniq_str('cs'));
         },
 
         click_zoomout: function(event){
+            var $target_elem = $(event.currentTarget);
+            var cid = $target_elem.parents('[cid]').attr('cid');
+            var the_change = this.collection.getByCid(cid);
 
+            the_change.set('highlight_dismiss', uniq_str('cs'));
         },
 
         initialize: function(){
-            this.collection.bind('add', this.add_one, this);
-            this.collection.bind('remove', this.remove, this);
+            this.collection.on('add', this.add_one, this);
+            this.collection.on('remove', this.remove, this);
         },
 
         render_one: function(the_model){
@@ -234,22 +236,46 @@ define(['jquery',
             return ret;
         },
 
-        change_one: function(the_change){
+        highlight: function(the_change){
+            console.log('ChangeSetView::highlight');
+            var cid = the_change.cid;
+            this.$(
+                '[cid=' + the_change.cid+ '] .the_change').addClass('highlight');
+            
+            var top = this.$('[cid=' + the_change.cid+ '] .the_change').position().top -
+                this.$('ul').position().top - 30;
+            console.log('scrollTop: ', top);
+
+            if ( /^ch/.test(the_change.get('highlight')) === false){
+                this.$('ul').animate({scrollTop: top }, 300);
+            }
+            //console.log('scroll to 1000', $el );
+        },
+
+        highlight_dismiss: function(the_change){
+            var cid = the_change.cid;
+            console.log('ChangeSetView::highlight_dismiss');
+            this.$(
+                '[cid=' + the_change.cid+ '] .the_change').removeClass('highlight');
+        },
+
+        new_value_changed: function(the_change){
             var html = this.render_one(the_change);
             this.$(
                 '[cid=' + the_change.cid+ ']').replaceWith(html);
         },
 
         add_one: function(the_change){
-            //console.log('the_model', the_model.toJSON());
             var html = this.render_one(the_change);
-            the_change.bind('change', this.change_one, this);
+            the_change.on('change:new_value', this.new_value_changed, this);
+            the_change.on('change:highlight', this.highlight, this);
+            the_change.on('change:highlight_dismiss', this.highlight_dismiss, this);
             this.$('ul').append(html);
         },
 
         remove: function(the_change){
-            console.log('remove called', the_change.toJSON());
-            this.unbind('change', the_change);
+            //console.log('remove called', the_change.toJSON());
+            the_change.off();
             this.$(
                 '[cid=' + the_change.cid+ ']').remove();
         },
@@ -272,11 +298,26 @@ define(['jquery',
 
         events: {
             "dblclick td.changeable":   "dblclick_td",
-            "click":                    "single_click"
+            "click td.changeable[change_cid]":   "click_highlighted"
         },
 
-        single_click: function(event){
-            this.$('.highlight').removeClass('.highlight');
+        click_highlighted: function(event){
+            //this.$('.highlight').removeClass('.highlight');
+            // console.log('click_highlighted');
+            var $target_elem = $(event.currentTarget);
+            var cid = $target_elem.attr('change_cid');
+            var the_change = ret_obj.changes.getByCid(cid);
+
+            var new_date = uniq_str('dt');
+            if (the_change !== undefined){
+                if ($target_elem.hasClass('highlight')){
+                    console.log('a highlight_dismiss');
+                    the_change.set('highlight_dismiss', new_date);
+                }else{
+                    console.log('a highlight');
+                    the_change.set('highlight', new_date);
+                }
+            }
         },
 
         recover_one: function(the_change){
@@ -288,15 +329,35 @@ define(['jquery',
             $targe_elem.removeClass('highlight');
             $targe_elem.html(html).removeAttr('change_cid');
             the_change.off('change:highlight', this.highlight, this);
+            the_change.off('change:highlight_dismiss', this.highlight_dismiss, this);
         },
 
         listen_change: function(the_change){
-            the_change.bind('change:highlight', this.highlight, this);
+            the_change.on('change:highlight', this.highlight, this);
+            the_change.on('change:highlight_dismiss', this.highlight_dismiss, this);
         },
 
         highlight: function(the_change){
+            var cid = this.$('.highlight').attr('change_cid');
+            var the_change_highlighted = ret_obj.changes.getByCid(cid);
+            if (the_change_highlighted !== undefined){
+                the_change_highlighted.set('highlight_dismiss', uniq_str('dt'));
+            }
             this.$('.highlight').removeClass('highlight');
-            this.$('[change_cid=' + the_change.cid+']').addClass('highlight');
+            var $highlight_elem = this.$('[change_cid=' + the_change.cid+']');
+            $highlight_elem.addClass('highlight');
+            var top = $highlight_elem.position().top - this.$('table').position().top - 50;
+            //console.log('top', top, 'scrollTop', s_top, 'offset_top', offset_top);
+            var hl = the_change.get('highlight');
+            console.log('hl', hl);
+            if ( /^dt/.test(hl) === false){
+                this.$el.animate({scrollTop: top }, 300);
+            }
+            
+        },
+
+        highlight_dismiss: function(the_change){
+            this.$('[change_cid=' + the_change.cid+']').removeClass('highlight');
         },
 
         dblclick_td: function(event){
@@ -329,7 +390,7 @@ define(['jquery',
         },
 
         initialize: function(){
-            this.collection.bind('reset',  this.render, this);
+            this.collection.on('reset',  this.render, this);
         },
 
         render: function() {
@@ -390,18 +451,16 @@ define(['jquery',
             collection: this.changes
         });
 
-
-
         this.columns = columns;
         this.init_columns();
 
         this.layout_view.render();
         this.changeset_view.render();
 
-        this.changes.bind('add',
+        this.changes.on('add',
             this.datatable.listen_change, this.datatable);
 
-        this.changes.bind('remove',
+        this.changes.on('remove',
             this.datatable.recover_one, this.datatable);
 
         this.layout_view.$('.datatable_placeholder').append(
