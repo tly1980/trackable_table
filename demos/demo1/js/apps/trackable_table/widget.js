@@ -261,8 +261,6 @@ define(['jquery',
                     origin_value:origin_value,
                     field_text: field_text
                 });
-
-            //console.log('render_one', ret);
             return ret;
         },
 
@@ -323,13 +321,21 @@ define(['jquery',
             }
         },
 
+        adjust_height: function(){
+            if ( ret_obj.changes.length > 0 ){
+                this.$el.height(ret_obj.height);
+                var ul_height = ret_obj.height - this.$('p.changeset_title').outerHeight() - 40;
+                this.$('ul').height(ul_height);
+            }else{
+                this.$el.height(0);
+            }
+        },
+
         render: function(){
             //console.log('tpl', ret_obj.tpl.changeset_view);
             this.$el.html(
                 ret_obj.tpl.changeset_view);
-            this.$el.height(ret_obj.height);
-            var ul_height = ret_obj.height - this.$('p.changeset_title').outerHeight() - 40;
-            this.$('ul').height(ul_height);
+            this.adjust_height();
             return this;
         }
     });
