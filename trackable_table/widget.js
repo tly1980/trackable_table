@@ -193,7 +193,8 @@ define(['jquery',
             "click a.icon-search": "click_search",
             "click a.icon-zoom-out": "click_zoomout",
             "click button.changeset_title": "toggle_view",
-            "click a.icon-remove": "click_remove_all"
+            "click a.icon-remove": "click_remove_all",
+            "click button.confirm_delete": "do_remove"
         },
 
         toggle_view: function(event){
@@ -207,18 +208,38 @@ define(['jquery',
         },
 
         click_remove_all: function(event){
-            while(this.collection.length){
-                this.collection.pop();
-            }
+            this.$('button.confirm_delete').removeAttr('cid');
+            //console.log('click_remove', $target_elem);
+            this.$('.dlg_title').text('Confirmation');
+            this.$('.dlg_msg').text('Do you want to undo the all changes ?');
+            $(this.$('div.modal')[0]).modal();
         },
 
         click_remove: function(event){
-            
+            //console.log('adf');
             var $target_elem = $(event.currentTarget);
             var cid = $target_elem.parents('[cid]').attr('cid');
-            var the_change = this.collection.getByCid(cid);
-            console.log('click_remove', $target_elem);
-            this.collection.remove([the_change]);
+            this.$('button.confirm_delete').attr('cid', cid);
+            //console.log('click_remove', $target_elem);
+            this.$('.dlg_title').text('Confirmation');
+            this.$('.dlg_msg').text('Do you want to undo the change ?');
+            $(this.$('div.modal')[0]).modal();
+        },
+
+        do_remove: function(event){
+            console.log('confirm_delete');
+            var $target_elem = $(event.currentTarget);
+            var cid = $target_elem.attr('cid');
+
+            if ( cid !== undefined ){
+                var the_change = this.collection.getByCid(cid);
+                $target_elem.removeAttr(cid);
+                this.collection.remove([the_change]);
+            }else {
+                while(this.collection.length){
+                    this.collection.pop();
+                }
+            }
         },
 
         click_search: function(event){

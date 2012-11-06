@@ -38,8 +38,7 @@ div.trackable_dt_table {
 
 div.datatable_placeholder {
   margin: 20px;
-  margin-top: 23px;
-  z-index: 10; }
+  margin-top: 23px; }
 
 div.changeset_placeholder {
   position: absolute;
@@ -47,8 +46,7 @@ div.changeset_placeholder {
   top: 0px;
   width: 300px;
   margin: 20px;
-  margin-top: 0px;
-  z-index: 1; }
+  margin-top: 0px; }
   div.changeset_placeholder div.changeset_view {
     padding: 0;
     margin: 0;
