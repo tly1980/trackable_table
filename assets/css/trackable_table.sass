@@ -63,82 +63,96 @@ div.trackable_dt_table
 
 div.datatable_placeholder
 	margin: 20px
+	margin-top: 23px
+	z-index: 10
 	
 
 div.changeset_placeholder
 	position: absolute
 	right: 0px
 	top: 0px
-	display: none
+	//display: none
 	width: 300px
 	margin: 20px
+	margin-top: 0px
+	z-index: 1
 
 	div.changeset_view
-		padding: 8px
+		padding: 0
 		margin: 0
 		position: relative
 
-		div.btn_set_changeview
+		button.changeset_title
 			position: absolute
-			left: 8px
-			top: 10px
+			right: 10px
+			top: 5px
+			display: none
 
+		div.changet_view_content
+			padding: 8px
+			margin: 0
+			position: absolute
+			top: 32px
+			right: 10px
+			width: 280px
+			display: none
 
-		p.changeset_title
-			text-align: right
-		ul
-			background-color: #E6E6EB
-			border: 1px solid $nicelookinig_gray
-			overflow: scroll
-			-webkit-border-radius: $radius-small
-			-moz-border-radius: $radius-small
-			border-radius: $radius-small			
+			ul
+				background-color: #E6E6EB
+				border: 1px solid $nicelookinig_gray
+				overflow: scroll
+				-webkit-border-radius: $radius-small
+				-moz-border-radius: $radius-small
+				border-radius: $radius-small	
+				top: 30px
+				left: 10px
+				width: 280px		
 
-			li
-				margin: 2px
+				li
+					margin: 2px
 
-				div.the_change
-					margin: 0px
-					position: relative
-					-webkit-border-radius: $radius-small
-					-moz-border-radius: $radius-small
-					border-radius: $radius-small
-					@include line_shadow
-					background-color:	#F7F7F9
+					div.the_change
+						margin: 0px
+						position: relative
+						-webkit-border-radius: $radius-small
+						-moz-border-radius: $radius-small
+						border-radius: $radius-small
+						@include line_shadow
+						background-color:	#F7F7F9
 
-					&.highlight
-						background-color: $the_change_highlight
-						&:hover
+						&.highlight
 							background-color: $the_change_highlight
+							&:hover
+								background-color: $the_change_highlight
 
-					&:hover
-						background-color: $changeset_li_hover_bg_color
+						&:hover
+							background-color: $changeset_li_hover_bg_color
 
-					p
-						white-space: nowrap
-						width: auto
-						overflow: hidden
-						text-overflow: ellipsis
-						line-height: 14px
-						padding-right: 30px
-						margin: 0
-						padding: 2px
-						padding-left: 8px
-						&.muted
-							line-height: 12px
-							font-size: 10px
-							border-bottom: 1px solid #888888
+						p
+							white-space: nowrap
+							width: auto
+							overflow: hidden
+							text-overflow: ellipsis
+							line-height: 14px
+							padding-right: 30px
+							margin: 0
+							padding: 2px
+							padding-left: 8px
+							&.muted
+								line-height: 12px
+								font-size: 10px
+								border-bottom: 1px solid #888888
 
-						&.field_text
-							font-size: 10px
-							text-align: left
-							text-transform: lowercase
-							color: black
-							padding-left: 2px
-							font-size: bold
+							&.field_text
+								font-size: 10px
+								text-align: left
+								text-transform: lowercase
+								color: black
+								padding-left: 2px
+								font-size: bold
 
-					div.btn_set
-						position: absolute
-						right: 0px
-						top:	2px
+						div.btn_set
+							position: absolute
+							right: 0px
+							top:	2px
 

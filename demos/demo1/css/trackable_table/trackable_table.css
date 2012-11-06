@@ -37,72 +37,85 @@ div.trackable_dt_table {
           margin: 0; }
 
 div.datatable_placeholder {
-  margin: 20px; }
+  margin: 20px;
+  margin-top: 23px;
+  z-index: 10; }
 
 div.changeset_placeholder {
   position: absolute;
   right: 0px;
   top: 0px;
-  display: none;
   width: 300px;
-  margin: 20px; }
+  margin: 20px;
+  margin-top: 0px;
+  z-index: 1; }
   div.changeset_placeholder div.changeset_view {
-    padding: 8px;
+    padding: 0;
     margin: 0;
     position: relative; }
-    div.changeset_placeholder div.changeset_view div.btn_set_changeview {
+    div.changeset_placeholder div.changeset_view button.changeset_title {
       position: absolute;
-      left: 8px;
-      top: 10px; }
-    div.changeset_placeholder div.changeset_view p.changeset_title {
-      text-align: right; }
-    div.changeset_placeholder div.changeset_view ul {
-      background-color: #e6e6eb;
-      border: 1px solid #e1e1e8;
-      overflow: scroll;
-      -webkit-border-radius: 4px;
-      -moz-border-radius: 4px;
-      border-radius: 4px; }
-      div.changeset_placeholder div.changeset_view ul li {
-        margin: 2px; }
-        div.changeset_placeholder div.changeset_view ul li div.the_change {
-          margin: 0px;
-          position: relative;
-          -webkit-border-radius: 4px;
-          -moz-border-radius: 4px;
-          border-radius: 4px;
-          -webkit-box-shadow: 0px 3px 5px rgba(50, 50, 50, 0.75);
-          -moz-box-shadow: 0px 3px 5px rgba(50, 50, 50, 0.75);
-          box-shadow: 0px 3px 5px rgba(50, 50, 50, 0.75);
-          background-color: #f7f7f9; }
-          div.changeset_placeholder div.changeset_view ul li div.the_change.highlight {
-            background-color: rgba(73, 175, 205, 0.26); }
-            div.changeset_placeholder div.changeset_view ul li div.the_change.highlight:hover {
+      right: 10px;
+      top: 5px;
+      display: none; }
+    div.changeset_placeholder div.changeset_view div.changet_view_content {
+      padding: 8px;
+      margin: 0;
+      position: absolute;
+      top: 32px;
+      right: 10px;
+      width: 280px;
+      display: none; }
+      div.changeset_placeholder div.changeset_view div.changet_view_content ul {
+        background-color: #e6e6eb;
+        border: 1px solid #e1e1e8;
+        overflow: scroll;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        top: 30px;
+        left: 10px;
+        width: 280px; }
+        div.changeset_placeholder div.changeset_view div.changet_view_content ul li {
+          margin: 2px; }
+          div.changeset_placeholder div.changeset_view div.changet_view_content ul li div.the_change {
+            margin: 0px;
+            position: relative;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            -webkit-box-shadow: 0px 3px 5px rgba(50, 50, 50, 0.75);
+            -moz-box-shadow: 0px 3px 5px rgba(50, 50, 50, 0.75);
+            box-shadow: 0px 3px 5px rgba(50, 50, 50, 0.75);
+            background-color: #f7f7f9; }
+            div.changeset_placeholder div.changeset_view div.changet_view_content ul li div.the_change.highlight {
               background-color: rgba(73, 175, 205, 0.26); }
-          div.changeset_placeholder div.changeset_view ul li div.the_change:hover {
-            background-color: white; }
-          div.changeset_placeholder div.changeset_view ul li div.the_change p {
-            white-space: nowrap;
-            width: auto;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            line-height: 14px;
-            padding-right: 30px;
-            margin: 0;
-            padding: 2px;
-            padding-left: 8px; }
-            div.changeset_placeholder div.changeset_view ul li div.the_change p.muted {
-              line-height: 12px;
-              font-size: 10px;
-              border-bottom: 1px solid #888888; }
-            div.changeset_placeholder div.changeset_view ul li div.the_change p.field_text {
-              font-size: 10px;
-              text-align: left;
-              text-transform: lowercase;
-              color: black;
-              padding-left: 2px;
-              font-size: bold; }
-          div.changeset_placeholder div.changeset_view ul li div.the_change div.btn_set {
-            position: absolute;
-            right: 0px;
-            top: 2px; }
+              div.changeset_placeholder div.changeset_view div.changet_view_content ul li div.the_change.highlight:hover {
+                background-color: rgba(73, 175, 205, 0.26); }
+            div.changeset_placeholder div.changeset_view div.changet_view_content ul li div.the_change:hover {
+              background-color: white; }
+            div.changeset_placeholder div.changeset_view div.changet_view_content ul li div.the_change p {
+              white-space: nowrap;
+              width: auto;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              line-height: 14px;
+              padding-right: 30px;
+              margin: 0;
+              padding: 2px;
+              padding-left: 8px; }
+              div.changeset_placeholder div.changeset_view div.changet_view_content ul li div.the_change p.muted {
+                line-height: 12px;
+                font-size: 10px;
+                border-bottom: 1px solid #888888; }
+              div.changeset_placeholder div.changeset_view div.changet_view_content ul li div.the_change p.field_text {
+                font-size: 10px;
+                text-align: left;
+                text-transform: lowercase;
+                color: black;
+                padding-left: 2px;
+                font-size: bold; }
+            div.changeset_placeholder div.changeset_view div.changet_view_content ul li div.the_change div.btn_set {
+              position: absolute;
+              right: 0px;
+              top: 2px; }

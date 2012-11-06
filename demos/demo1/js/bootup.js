@@ -27,6 +27,5 @@ requirejs(['apps/trackable_table/widget'], function(widget){
 
     $('div.dt_placeholder').append(
         widget.layout_view.$el);
-
     widget.fetch();
 });

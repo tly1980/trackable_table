@@ -1,10 +1,16 @@
+require.config({
+    shim: {
+        './libs/bootstrap':   ['underscore', 'jquery']
+    }
+});
+
 define(['jquery',
         'underscore',
         'backbone',
         'mustache',
-        'text!./templates/tpl.json'
-        ],
-    function ($, _, Backbone, Mustache, tpl) {
+        'text!./templates/tpl.json',
+        './libs/bootstrap'],
+    function ($, _, Backbone, Mustache, tpl, bootstrap) {
 
     var ret_obj = {
         columns: {
@@ -18,6 +24,10 @@ define(['jquery',
 
         changes: new Backbone.Collection([]),
         rows: new Backbone.Collection([]),
+
+        layoutview_model: new Backbone.Model({
+            show_changeset: false
+        }) ,
 
         init_columns: function(){
             var that = this;
@@ -48,6 +58,7 @@ define(['jquery',
         initialize: function(){
             ret_obj.changes.on('add', this.adjust, this);
             ret_obj.changes.on('remove', this.adjust, this);
+            ret_obj.layoutview_model.on('change:show_changeset', this.show_changeset, this);
         },
 
         render: function(){
@@ -56,30 +67,29 @@ define(['jquery',
             return this;
         },
 
-        adjust: function(){
+        show_changeset: function(the_model){
             var el_width = this.$el.width();
             var $chgset_pholder = this.$('.changeset_placeholder');
             var $dt_pholder = this.$('.datatable_placeholder');
 
             var new_width;
 
-
-            if ( ret_obj.changes.length > 0 && $chgset_pholder.css('display') !== 'block'){
+            if ( the_model.get('show_changeset') === true &&
+                 ret_obj.changes.length > 0 ){
                 new_width = el_width - $chgset_pholder.outerWidth(
                     ) - $chgset_pholder.css(
                     'marginLeft').replace("px", "") - $dt_pholder.css(
                     'marginRight').replace("px", "") - $dt_pholder.css('marginLeft').replace("px", "");
 
-                console.log('show~!');
-                this.$('.changeset_placeholder').fadeIn('fast');
+                //this.$('.changeset_placeholder').show();
                 $dt_pholder.width(new_width);
             }
 
-            if ( ret_obj.changes.length <= 0 ){
+            if ( the_model.get('show_changeset') === false ){
                 new_width = el_width - $dt_pholder.css('marginLeft').replace(
                     'px', '') -  $dt_pholder.css('marginRight').replace(
                     'px', '');
-                this.$('.changeset_placeholder').fadeOut('fast');
+                //this.$('.changeset_placeholder').fadeOut('fast');
                 $dt_pholder.width(new_width);
             }
         }
@@ -176,12 +186,23 @@ define(['jquery',
     }
 
     var ChangeSetView = Backbone.View.extend({
-        className: 'changeset_view alert',
+        className: 'changeset_view',
 
         events: {
             "click a.icon-remove-sign": "click_remove",
             "click a.icon-search": "click_search",
-            "click a.icon-zoom-out": "click_zoomout"
+            "click a.icon-zoom-out": "click_zoomout",
+            "click button.changeset_title": "toggle_view"
+        },
+
+        toggle_view: function(event){
+            var $target_elem = $(event.currentTarget);
+            //console.log('toggle_view');
+            if ($target_elem.hasClass('active')){
+                ret_obj.layoutview_model.set("show_changeset", false);
+            }else{
+                ret_obj.layoutview_model.set("show_changeset", true);
+            }
         },
 
         click_remove: function(event){
@@ -213,6 +234,15 @@ define(['jquery',
         initialize: function(){
             this.collection.on('add', this.add_one, this);
             this.collection.on('remove', this.remove, this);
+            ret_obj.layoutview_model.on('change:show_changeset', this.show_changeset, this);
+        },
+
+        show_changeset: function(the_model){
+            if (the_model.get('show_changeset') === true){
+                this.$('div.changet_view_content').fadeIn('fast');
+            }else{
+                this.$('div.changet_view_content').fadeOut('fast');
+            }
         },
 
         render_one: function(the_model){
@@ -265,12 +295,19 @@ define(['jquery',
                 '[cid=' + the_change.cid+ ']').replaceWith(html);
         },
 
+        update_changeset_number: function(){
+            var changeset_number = ret_obj.changes.length;
+            this.$('.changeset_title').text('Change Sets (' + changeset_number + ')');
+        },
+
         add_one: function(the_change){
             var html = this.render_one(the_change);
             the_change.on('change:new_value', this.new_value_changed, this);
             the_change.on('change:highlight', this.highlight, this);
             the_change.on('change:highlight_dismiss', this.highlight_dismiss, this);
+            this.$('.changeset_title').show();
             this.$('ul').append(html);
+            this.update_changeset_number();
         },
 
         remove: function(the_change){
@@ -278,6 +315,12 @@ define(['jquery',
             the_change.off();
             this.$(
                 '[cid=' + the_change.cid+ ']').remove();
+            if ( this.collection.length <= 0 ){
+                this.$('.changeset_title').hide();
+                ret_obj.layoutview_model.set('show_changeset', false) ;
+            }else{
+                this.update_changeset_number();
+            }
         },
 
         render: function(){
@@ -299,6 +342,12 @@ define(['jquery',
         events: {
             "dblclick td.changeable":   "dblclick_td",
             "click td.changeable[change_cid]":   "click_highlighted"
+        },
+
+        display_tips: function(){
+            // var elem = this.$('.changeable')[0];
+            // $(elem).attr('title', 'Double click me to edit the content');
+            // $(elem).tooltip('show');
         },
 
         click_highlighted: function(event){
@@ -470,7 +519,11 @@ define(['jquery',
     };
 
     ret_obj.fetch = function(){
-        this.rows.fetch();
+        this.rows.fetch({
+            success: function(){
+                ret_obj.datatable.display_tips();
+            }
+        });
     };
 
     return ret_obj;
