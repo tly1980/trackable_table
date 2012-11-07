@@ -27,7 +27,14 @@ define(['jquery',
 
         layoutview_model: new Backbone.Model({
             show_changeset: false
-        }) ,
+        }),
+
+        dialog_model: new Backbone.Model({
+            show: false,
+            title: 'Confirmation',
+            msg_list: ['This is the message you would like to see !', 'hahah'],
+            msg_class: 'alert'
+        }),
 
         init_columns: function(){
             var that = this;
@@ -185,6 +192,45 @@ define(['jquery',
         return src + ',' + (new Date()).toISOString();
     }
 
+    function show_dialog(title, msg_list, callback){
+        ret_obj.dialog_model.set('title', title);
+        ret_obj.dialog_model.set('msg_list', msg_list);
+        ret_obj.dialog_model.set('callback', callback);
+        ret_obj.dialog_model.set('show', new Date());
+    }
+
+    var DialogView = Backbone.View.extend({
+        className: 'modal hide fade',
+        events: {
+            "click a.btn.ok": "click_ok"
+        },
+
+        initialize: function(){
+            this.model.on('change:show', this.show, this);
+        },
+
+        show: function(){
+            this.render();
+            this.$el.modal();
+        },
+
+        render: function(){
+            var html = Mustache.render(
+                ret_obj.tpl.confirm_dlg, this.model.toJSON() ) ;
+            this.$el.html(html);
+        },
+
+        click_ok: function(){
+            console.log('click_ok');
+            callback = this.model.get('callback');
+            if ( callback !== undefined ){
+                callback();
+            }
+            this.$el.modal('hide');
+            //this.$('.modal').modal('hide');
+        }
+    });
+
     var ChangeSetView = Backbone.View.extend({
         className: 'changeset_view',
 
@@ -194,12 +240,12 @@ define(['jquery',
             "click a.icon-zoom-out": "click_zoomout",
             "click button.changeset_title": "toggle_view",
             "click a.icon-remove": "click_remove_all",
-            "click button.confirm_delete": "do_remove"
+            "click button.ok": "do_remove"
         },
 
         toggle_view: function(event){
             var $target_elem = $(event.currentTarget);
-            //console.log('toggle_view');
+            console.log('toggle_view');
             if ($target_elem.hasClass('active')){
                 ret_obj.layoutview_model.set("show_changeset", false);
             }else{
@@ -208,22 +254,29 @@ define(['jquery',
         },
 
         click_remove_all: function(event){
+            var that = this;
             this.$('button.confirm_delete').removeAttr('cid');
-            //console.log('click_remove', $target_elem);
-            this.$('.dlg_title').text('Confirmation');
-            this.$('.dlg_msg').text('Do you want to undo the all changes ?');
-            $(this.$('div.modal')[0]).modal();
+            show_dialog('Undo Changes',
+                ['You are about to remove all the changes.',
+                 'Do you want to proceed this operation？'], function(){
+                        while(that.collection.length){
+                            that.collection.pop();
+                        }
+                 });
         },
 
         click_remove: function(event){
             //console.log('adf');
             var $target_elem = $(event.currentTarget);
             var cid = $target_elem.parents('[cid]').attr('cid');
-            this.$('button.confirm_delete').attr('cid', cid);
-            //console.log('click_remove', $target_elem);
-            this.$('.dlg_title').text('Confirmation');
-            this.$('.dlg_msg').text('Do you want to undo the change ?');
-            $(this.$('div.modal')[0]).modal();
+            var the_change = this.collection.getByCid(cid);
+            var that = this;
+
+            show_dialog('Undo Changes',
+                ['You are about to undo one change.',
+                 'Do you want to proceed this operation？'], function(){
+                    that.collection.remove(the_change);
+                 });
         },
 
         do_remove: function(event){
@@ -378,8 +431,6 @@ define(['jquery',
             //console.log('tpl', ret_obj.tpl.changeset_view);
             this.$el.html(
                 ret_obj.tpl.changeset_view);
-            this.$el.append(
-                ret_obj.tpl.confirm_dlg);
             this.adjust_height(false);
             return this;
         }
@@ -551,11 +602,16 @@ define(['jquery',
             collection: this.changes
         });
 
+        this.dialog_view = new DialogView({
+            model: this.dialog_model
+        });
+
         this.columns = columns;
         this.init_columns();
 
         this.layout_view.render();
         this.changeset_view.render();
+
 
         this.changes.on('add',
             this.datatable.listen_change, this.datatable);
