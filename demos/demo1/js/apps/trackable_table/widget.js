@@ -20,6 +20,8 @@ define(['jquery',
             header4: 'Header 4'
         },
 
+        show_tips: true,
+
         tpl: JSON.parse(tpl),
 
         changes: new Backbone.Collection([]),
@@ -173,15 +175,19 @@ define(['jquery',
         },
 
         render: function(){
-            var html, new_value;
+            var html, new_value, field_text, field;
+
             input_value = this.model.get('origin_value');
             new_value = this.model.get('new_value');
+            field = this.model.get('field');
             //console.log('new_value', new_value);
             if ( new_value !== undefined ){
                 input_value = new_value;
             }
             html = '<input value="' + input_value + '"/>';
             this.$el.html(html);
+            field_text = ret_obj.columns[field].text;
+            this.$('input').attr('placeholder', field_text);
             return this;
         }
     });
@@ -408,7 +414,8 @@ define(['jquery',
             this.$(
                 '[cid=' + the_change.cid+ ']').remove();
             if ( this.collection.length <= 0 ){
-                this.$('.changeset_title').hide();
+                this.$('.changeset_title').
+                    removeClass('active').hide();
                 ret_obj.layoutview_model.set('show_changeset', false) ;
             }else{
                 this.update_changeset_number();
@@ -611,7 +618,6 @@ define(['jquery',
 
         this.layout_view.render();
         this.changeset_view.render();
-
 
         this.changes.on('add',
             this.datatable.listen_change, this.datatable);

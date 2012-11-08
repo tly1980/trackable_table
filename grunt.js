@@ -3,9 +3,13 @@ module.exports = function(grunt) {
   // // Project configuration.
   grunt.initConfig({
     html2json: {
-      dist: {
+      tpl: {
          src: ['trackable_table/templates/*.txt', 'trackable_table/templates/*.html'],
          dest: 'trackable_table/templates/tpl.json'
+      },
+      msgs: {
+         src: ['trackable_table/messages/*.txt', 'trackable_table/messages/*.html'],
+         dest: 'trackable_table/messages/msgs.json'
       }
     },
 
