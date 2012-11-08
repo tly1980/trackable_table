@@ -611,7 +611,7 @@ define(['jquery',
             var origin_value = the_change.get_origin_value(
                 true);
             $targe_elem.tooltip({
-                title: 'Original Value: ' + origin_value,
+                title: 'Origin: ' + origin_value,
                 trigger: 'hover',
                 placement: 'top'
             });
