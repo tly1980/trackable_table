@@ -29,7 +29,7 @@ requirejs(['apps/trackable_table/widget'], function(widget){
                         tpl: '${{val}}',
                         changeable: true,
                         width:'15%',
-                        rule:/^\d+[\.]*\d{0,2}$/,
+                        rule:/^\d+[\.]{1}\d{2}$/,
                         tips: 'Please input number with two digits after decimal point. e.g. 23.58.'},
 
         sold_count:   {text: 'Sold Count',

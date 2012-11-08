@@ -60,8 +60,13 @@ div.changeset_placeholder {
     position: relative; }
     div.changeset_placeholder div.changeset_view button.changeset_title {
       position: absolute;
-      right: 10px;
+      right: 45px;
       top: 5px;
+      display: none; }
+    div.changeset_placeholder div.changeset_view span.changeset_title {
+      position: absolute;
+      right: 10px;
+      top: 10px;
       display: none; }
     div.changeset_placeholder div.changeset_view div.changet_view_content {
       padding: 8px;

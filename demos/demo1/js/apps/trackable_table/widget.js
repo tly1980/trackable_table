@@ -134,18 +134,33 @@ define(['jquery',
             var origin_value = this.model.get('origin_value');
             var new_value = this.model.get('new_value');
             var current_value = origin_value;
+            var rule_pass = this.model.rule_test(input_value);
             if ( new_value !== undefined ){
                 current_value = new_value;
             }
-
-            //console.log('keyCode', event.keyCode);
 
             //modifying a never changed cell
             if ( event.keyCode === 27 ){
                 // hitting ESC
                 this.freeze_value(current_value);
+            }
 
-            } else if ( event.keyCode === 13 ) {
+            if (rule_pass === true &&
+                this.popover_showed === true){
+
+                this.$el.popover('hide');
+                this.$el.removeClass('error');
+                this.popover_showed = false;
+                
+            }else if ( rule_pass === false &&
+                this.popover_showed === false){
+
+                this.$el.popover('show');
+                this.$el.addClass('error');
+                this.popover_showed = true;
+            }
+
+            if ( event.keyCode === 13 && rule_pass !== false) {
                 //when hitting enter
                 if ( input_value === origin_value ){
                     //console.log('aaa', this.$el.parent().attr('change_cid'));
@@ -164,27 +179,6 @@ define(['jquery',
                 }
 
                 this.freeze_value(input_value);
-            } else {
-                // hitting not Enter or ESC
-                var rule = this.model.get_rule();
-                if (rule !== undefined){
-                    if (rule.test(input_value) === true){
-                        //console.log('matched..');
-                        if (this.popover_showed === true ){
-                            this.$el.popover('hide');
-                            this.$el.removeClass('error');
-                            this.popover_showed = false;
-                        }
-                    }else{
-                        if (this.popover_showed === false){
-                            this.$el.popover('show');
-                            this.$el.addClass('error');
-                            this.popover_showed = true;
-                        }
-                        
-                        console.log('show called aa');
-                    }
-                }
             }
             //console.log('event', event, this.$el.parent());
         },
@@ -229,7 +223,7 @@ define(['jquery',
             //     this.model, 'tips');
             if (rule !== undefined){
                 this.$el.popover({
-                    title: 'Wrong input',
+                    title: 'Invalid Input',
                     content: tips,
                     placement: 'top'
                 });
@@ -473,7 +467,8 @@ define(['jquery',
 
         update_changeset_number: function(){
             var changeset_number = ret_obj.changes.length;
-            this.$('.changeset_title').text('Change Sets (' + changeset_number + ')');
+            //this.$('.changeset_title').text('Change Sets');
+            this.$('span.changeset_title').text(changeset_number);
         },
 
         add_one: function(the_change){
@@ -554,6 +549,21 @@ define(['jquery',
         get_tips: function(){
             return ret_obj.columns[
                 this.get('field')].tips;
+        },
+
+        rule_test: function(value){
+            var rule = this.get_rule();
+            if ( rule === undefined ){
+                return undefined;
+            }
+
+            if (rule instanceof RegExp === true){
+                return rule.test(value);
+            }
+
+            if (rule instanceof Function === true){
+                return rule(value);
+            }
         }
     });
 
@@ -611,7 +621,7 @@ define(['jquery',
             var origin_value = the_change.get_origin_value(
                 true);
             $targe_elem.tooltip({
-                title: 'Original Value: ' + origin_value,
+                title: 'Origin: ' + origin_value,
                 trigger: 'hover',
                 placement: 'top'
             });
