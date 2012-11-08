@@ -59,6 +59,11 @@ define(['jquery',
         }
     };
 
+    function column_prop_from_change_model(the_change, prop_name){
+        //console.log('columns', the_change.get('field'), prop_name, ret_obj.columns);
+        return ret_obj.columns[the_change.get('field')][prop_name];
+    }
+
     var LayoutView = Backbone.View.extend({
 
         className: 'layout_view',
@@ -106,7 +111,7 @@ define(['jquery',
 
     var InputView = Backbone.View.extend({
 
-        className: 'input_div',
+        className: 'input_div control-group',
 
         events: {
             "keyup input": "input_keyup",
@@ -137,10 +142,11 @@ define(['jquery',
 
             //modifying a never changed cell
             if ( event.keyCode === 27 ){
+                // hitting ESC
                 this.freeze_value(current_value);
-            }
 
-            if ( event.keyCode === 13 ) {
+            } else if ( event.keyCode === 13 ) {
+                //when hitting enter
                 if ( input_value === origin_value ){
                     //console.log('aaa', this.$el.parent().attr('change_cid'));
                     //this.$el.parent().attr('change_cid');
@@ -157,6 +163,27 @@ define(['jquery',
                 }
 
                 this.freeze_value(input_value);
+            } else {
+                // hitting not Enter or ESC
+                var rule = column_prop_from_change_model(this.model, 'rule');
+                if (rule !== undefined){
+                    if (rule.test(input_value) === true){
+                        //console.log('matched..');
+                        if (this.popover_showed === true ){
+                            this.$el.popover('hide');
+                            this.$el.removeClass('error');
+                            this.popover_showed = false;
+                        }
+                    }else{
+                        if (this.popover_showed === false){
+                            this.$el.popover('show');
+                            this.$el.addClass('error');
+                            this.popover_showed = true;
+                        }
+                        
+                        console.log('show called aa');
+                    }
+                }
             }
             //console.log('event', event, this.$el.parent());
         },
@@ -171,6 +198,8 @@ define(['jquery',
             var html = Mustache.render(
                 this.model.get('tpl'),
                 { val: value });
+            //destroy the popover when this view is being disposed
+            this.$el.popover('destroy');
             this.$el.parent().html(html);
         },
 
@@ -184,11 +213,31 @@ define(['jquery',
             if ( new_value !== undefined ){
                 input_value = new_value;
             }
-            html = '<input value="' + input_value + '"/>';
+            html = '<input type="text" value="' + input_value + '"/>';
             this.$el.html(html);
             field_text = ret_obj.columns[field].text;
             this.$('input').attr('placeholder', field_text);
+            this.init_rule_verify_popover();
             return this;
+        },
+
+        init_rule_verify_popover: function(){
+            var rule = column_prop_from_change_model(
+                this.model, 'rule');
+            var tips = column_prop_from_change_model(
+                this.model, 'tips');
+            if (rule !== undefined){
+                this.$el.popover({
+                    title: 'Please correct your input',
+                    content: tips,
+                    placement: 'top'
+                });
+
+            }
+        },
+
+        initialize: function(){
+            this.popover_showed = false;
         }
     });
    
@@ -555,13 +604,15 @@ define(['jquery',
             var field = $target_elem.attr('field');
             var row_model = this.collection.getByCid(cid);
             var tpl = ret_obj.columns[field].tpl;
+            var rule = ret_obj.columns[field].rule;
             var change;
             
             if ( change_cid === undefined ){
                 change = new Backbone.Model({
                   origin_value: row_model.get(field),
                   field: field,
-                  tpl: tpl
+                  tpl: tpl,
+                  rule: rule
                 });
             } else {
                 change = ret_obj.changes.getByCid(change_cid);
