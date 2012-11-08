@@ -23,7 +23,7 @@ div.trackable_dt_table {
       div.trackable_dt_table table.table tbody tr td.changeable[change_cid] {
         background-color: #f8e7c9; }
         div.trackable_dt_table table.table tbody tr td.changeable[change_cid]:hover {
-          background-color: #bdd8da; }
+          background-color: #86e7fa; }
         div.trackable_dt_table table.table tbody tr td.changeable[change_cid].highlight {
           color: white;
           text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
@@ -60,7 +60,7 @@ div.changeset_placeholder {
     position: relative; }
     div.changeset_placeholder div.changeset_view button.changeset_title {
       position: absolute;
-      right: 45px;
+      right: 52px;
       top: 5px;
       display: none; }
     div.changeset_placeholder div.changeset_view span.changeset_title {
