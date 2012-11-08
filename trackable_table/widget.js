@@ -150,22 +150,23 @@ define(['jquery',
                 if ( input_value === origin_value ){
                     //console.log('aaa', this.$el.parent().attr('change_cid'));
                     //this.$el.parent().attr('change_cid');
-                    this.$el.parent().removeAttr('change_cid');
                     ret_obj.changes.remove(this.model);
                 }
 
                 if ( current_value !== input_value && origin_value !== input_value ){
                     this.model.set('new_value', input_value);
                     if (ret_obj.changes.getByCid(this.model.cid) === undefined){
-                        ret_obj.changes.push(this.model);
+                        // mark the parent td with 'change_cid',
+                        // and this has to be done before pushing to changes collection
                         this.$el.parent().attr('change_cid', this.model.cid);
+                        ret_obj.changes.push(this.model);
                     }
                 }
 
                 this.freeze_value(input_value);
             } else {
                 // hitting not Enter or ESC
-                var rule = column_prop_from_change_model(this.model, 'rule');
+                var rule = this.model.get_rule();
                 if (rule !== undefined){
                     if (rule.test(input_value) === true){
                         //console.log('matched..');
@@ -196,7 +197,7 @@ define(['jquery',
             //console.log('freeze_value, model', this.model.toJSON());
 
             var html = Mustache.render(
-                this.model.get('tpl'),
+                this.model.get_tpl(),
                 { val: value });
             //destroy the popover when this view is being disposed
             this.$el.popover('destroy');
@@ -222,13 +223,13 @@ define(['jquery',
         },
 
         init_rule_verify_popover: function(){
-            var rule = column_prop_from_change_model(
-                this.model, 'rule');
-            var tips = column_prop_from_change_model(
-                this.model, 'tips');
+            var rule = this.model.get_rule();
+            var tips = this.model.get_tips();
+            // column_prop_from_change_model(
+            //     this.model, 'tips');
             if (rule !== undefined){
                 this.$el.popover({
-                    title: 'Please correct your input',
+                    title: 'Wrong input',
                     content: tips,
                     placement: 'top'
                 });
@@ -415,10 +416,8 @@ define(['jquery',
         },
 
         render_one: function(the_model){
-            var new_value = Mustache.render(the_model.get('tpl'),
-                {val: the_model.get('new_value')});
-            var origin_value = Mustache.render(the_model.get('tpl'),
-                {val: the_model.get('origin_value')});
+            var new_value = the_model.get_new_value(true);
+            var origin_value = the_model.get_origin_value(true);
             var field = the_model.get('field');
 
             var field_text = ret_obj.columns[field].text;
@@ -522,6 +521,42 @@ define(['jquery',
         }
     });
 
+    var ChangeModel = Backbone.Model.extend({
+
+        get_origin_value: function(formated){
+            if (formated === true){
+                return Mustache.render(
+                    this.get_tpl(),
+                    {val: this.get('origin_value')});
+            }
+            return this.get('origin_value');
+        },
+
+        get_new_value: function(formated){
+            if (formated === true){
+                return Mustache.render(
+                    this.get_tpl(),
+                    {val: this.get('new_value')});
+            }
+            return this.get('new_value');
+        },
+
+        get_tpl: function(){
+            return ret_obj.columns[
+                this.get('field')].tpl;
+        },
+
+        get_rule: function(){
+            return ret_obj.columns[
+                this.get('field')].rule;
+        },
+
+        get_tips: function(){
+            return ret_obj.columns[
+                this.get('field')].tips;
+        }
+    });
+
     var DataTable = Backbone.View.extend({
 
         tagName: "div",
@@ -560,16 +595,27 @@ define(['jquery',
         recover_one: function(the_change){
             var cid = the_change.cid;
             var $targe_elem = this.$('[change_cid=' + cid + ']');
-            var html = Mustache.render(
-                the_change.get('tpl'),
-                {val: the_change.get('origin_value')});
+            var origin_value_formated = the_change.get_origin_value(true);
             $targe_elem.removeClass('highlight');
-            $targe_elem.html(html).removeAttr('change_cid');
+            $targe_elem.html(
+                origin_value_formated).removeAttr('change_cid');
             the_change.off('change:highlight', this.highlight, this);
             the_change.off('change:highlight_dismiss', this.highlight_dismiss, this);
+
+            $targe_elem.tooltip('destroy');
         },
 
         listen_change: function(the_change){
+            var cid = the_change.cid;
+            var $targe_elem = this.$('[change_cid=' + cid + ']');
+            var origin_value = the_change.get_origin_value(
+                true);
+            $targe_elem.tooltip({
+                title: 'Original Value: ' + origin_value,
+                trigger: 'hover',
+                placement: 'top'
+            });
+
             the_change.on('change:highlight', this.highlight, this);
             the_change.on('change:highlight_dismiss', this.highlight_dismiss, this);
         },
@@ -603,16 +649,12 @@ define(['jquery',
             var change_cid = $target_elem.attr('change_cid');
             var field = $target_elem.attr('field');
             var row_model = this.collection.getByCid(cid);
-            var tpl = ret_obj.columns[field].tpl;
-            var rule = ret_obj.columns[field].rule;
             var change;
             
             if ( change_cid === undefined ){
-                change = new Backbone.Model({
+                change = new ChangeModel({
                   origin_value: row_model.get(field),
-                  field: field,
-                  tpl: tpl,
-                  rule: rule
+                  field: field
                 });
             } else {
                 change = ret_obj.changes.getByCid(change_cid);
