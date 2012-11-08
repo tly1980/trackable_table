@@ -109,6 +109,18 @@ div.changeset_placeholder
 			display: none
 			@include line_shadow
 
+			div.btn_set
+				a:hover
+					cursor: pointer
+
+			div.btn_set
+				position: relative
+				p.review_tips
+					position: absolute
+					right: 0
+					top: 0
+
+
 			ul
 				background-color: #E6E6EB
 				border: 1px solid $nicelookinig_gray
@@ -132,8 +144,7 @@ div.changeset_placeholder
 						@include line_shadow
 						background-color:	#F7F7F9
 
-						a:hover
-							cursor: pointer
+
 
 						&.highlight
 							background-color: $the_change_highlight

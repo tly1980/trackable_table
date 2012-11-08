@@ -246,7 +246,53 @@ define(['jquery',
             "click a.icon-zoom-out": "click_zoomout",
             "click button.changeset_title": "toggle_view",
             "click a.icon-remove": "click_remove_all",
-            "click button.ok": "do_remove"
+            "click a.icon-chevron-up": "click_move",
+            "click a.icon-chevron-down": "click_move"
+        },
+
+        click_move: function(event){
+            var $target_elem = $(event.currentTarget);
+            var move_down = true;
+            if ($target_elem.hasClass('icon-chevron-up')){
+                move_down = false;
+            }
+
+            var cid_current = this.$('.highlight').parent().attr('cid');
+            var to_be_hl ;
+            if (this.collection.length <= 0 ){
+                return;
+            }
+
+            if (cid_current !== undefined){
+                var current = this.collection.getByCid(
+                    cid_current);
+                var idx = this.collection.indexOf(current);
+
+                if (move_down === true){
+                    idx++;
+                }else{
+                    idx--;
+                }
+
+                idx = idx <= 0 ? 0 : idx;
+                idx = idx >= this.collection.length ? this.collection.length - 1 : idx;
+
+                to_be_hl = this.collection.at(idx);
+
+            }else{
+                to_be_hl = this.collection.at(0);
+            }
+
+            //console.log('idx', idx, to_be_hl, move_down, $target_elem);
+
+            if (cid_current === to_be_hl.cid ){
+                return;
+            }
+
+            //this.highlight(to_be_hl);
+            if (to_be_hl !== undefined ){
+                to_be_hl.set('highlight', uniq_str('ncs'));
+            }
         },
 
         toggle_view: function(event){
@@ -283,22 +329,6 @@ define(['jquery',
                  'Do you want to proceed this operation？'], function(){
                     that.collection.remove(the_change);
                  });
-        },
-
-        do_remove: function(event){
-            console.log('confirm_delete');
-            var $target_elem = $(event.currentTarget);
-            var cid = $target_elem.attr('cid');
-
-            if ( cid !== undefined ){
-                var the_change = this.collection.getByCid(cid);
-                $target_elem.removeAttr(cid);
-                this.collection.remove([the_change]);
-            }else {
-                while(this.collection.length){
-                    this.collection.pop();
-                }
-            }
         },
 
         click_search: function(event){
@@ -355,18 +385,18 @@ define(['jquery',
         },
 
         highlight: function(the_change){
-            //console.log('ChangeSetView::highlight');
+            console.log('ChangeSetView::highlight');
             var cid = the_change.cid;
             var $the_change_div = this.$(
                 '[cid=' + the_change.cid+ '] .the_change');
             $the_change_div.addClass('highlight');
-            console.log($the_change_div.children('a.icon-search'));
+            //console.log($the_change_div.children('a.icon-search'));
             $the_change_div.find('a.icon-search').hide();
             $the_change_div.find('a.icon-zoom-out').show();
 
             var top = $the_change_div.position().top -
                 this.$('ul').position().top - 30;
-            console.log('scrollTop: ', top);
+            //console.log('scrollTop: ', top);
 
             if ( /^cs/.test(the_change.get('highlight')) === false){
                 this.$('ul').animate({scrollTop: top }, 300);
