@@ -17,7 +17,10 @@ requirejs.config({
 
 // Start loading the main app file. Put all of
 // your application logic in there.
-requirejs(['apps/trackable_table/widget'], function(widget){
+requirejs([
+    'apps/trackable_table/widget',
+    'apps/trackable_table/tutor'],
+    function(widget, tutor){
     widget.init({
         name:         {text: 'Product Name',
                        changeable:true,
@@ -44,5 +47,12 @@ requirejs(['apps/trackable_table/widget'], function(widget){
 
     $('div.dt_placeholder').append(
         widget.layout_view.$el);
+    
+    tutor.bind(widget.datatable, widget.changeset_view);
+
+    widget.datatable.on('render_finished', function(){
+        console.log('render done!');
+    });
+
     widget.fetch();
 });

@@ -59,11 +59,6 @@ define(['jquery',
         }
     };
 
-    function column_prop_from_change_model(the_change, prop_name){
-        //console.log('columns', the_change.get('field'), prop_name, ret_obj.columns);
-        return ret_obj.columns[the_change.get('field')][prop_name];
-    }
-
     var LayoutView = Backbone.View.extend({
 
         className: 'layout_view',
@@ -219,8 +214,6 @@ define(['jquery',
         init_rule_verify_popover: function(){
             var rule = this.model.get_rule();
             var tips = this.model.get_tips();
-            // column_prop_from_change_model(
-            //     this.model, 'tips');
             if (rule !== undefined){
                 this.$el.popover({
                     title: 'Invalid Input',
@@ -341,12 +334,13 @@ define(['jquery',
 
         toggle_view: function(event){
             var $target_elem = $(event.currentTarget);
-            console.log('toggle_view');
             if ($target_elem.hasClass('active')){
                 ret_obj.layoutview_model.set("show_changeset", false);
             }else{
                 ret_obj.layoutview_model.set("show_changeset", true);
             }
+
+            this.trigger('toggle_view');
         },
 
         click_remove_all: function(event){
@@ -367,6 +361,7 @@ define(['jquery',
             var cid = $target_elem.parents('[cid]').attr('cid');
             var the_change = this.collection.getByCid(cid);
             var that = this;
+            this.trigger('click_remove');
 
             show_dialog('Undo Changes',
                 ['You are about to undo one change.',
@@ -382,6 +377,7 @@ define(['jquery',
 
             //uniq_str('cs') indicate the changes comes from changeset view
             the_change.set('highlight', uniq_str('cs'));
+            this.trigger('click_search');
         },
 
         click_zoomout: function(event){
@@ -390,6 +386,7 @@ define(['jquery',
             var the_change = this.collection.getByCid(cid);
 
             the_change.set('highlight_dismiss', uniq_str('cs'));
+            this.trigger('click_zoomout');
         },
 
         initialize: function(){
@@ -418,6 +415,7 @@ define(['jquery',
 
             var ret = Mustache.render(
                 ret_obj.tpl.changeset_item, {
+                    db_id: the_model.get('id'),
                     cid: the_model.cid,
                     new_value:new_value,
                     origin_value:origin_value,
@@ -427,7 +425,7 @@ define(['jquery',
         },
 
         highlight: function(the_change){
-            console.log('ChangeSetView::highlight');
+            //console.log('ChangeSetView::highlight');
             var cid = the_change.cid;
             var $the_change_div = this.$(
                 '[cid=' + the_change.cid+ '] .the_change');
@@ -469,6 +467,7 @@ define(['jquery',
             var changeset_number = ret_obj.changes.length;
             //this.$('.changeset_title').text('Change Sets');
             this.$('span.changeset_title').text(changeset_number);
+            this.trigger('update_changeset_number');
         },
 
         add_one: function(the_change){
@@ -642,7 +641,7 @@ define(['jquery',
             var top = $highlight_elem.position().top - this.$('table').position().top - 50;
             //console.log('top', top, 'scrollTop', s_top, 'offset_top', offset_top);
             var hl = the_change.get('highlight');
-            console.log('hl', hl);
+            //console.log('hl', hl);
             if ( /^dt/.test(hl) === false){
                 this.$el.animate({scrollTop: top }, 300);
             }
@@ -678,6 +677,7 @@ define(['jquery',
             $target_elem.html(input.render().$el);
             input.$('input').focus();
             //console.log('change', change.toJSON());
+            this.trigger('td_dblclick');
         },
 
         initialize: function(){
@@ -688,6 +688,7 @@ define(['jquery',
             var tbl_html = '<table class="table table-condensed">' + this.render_thead() + this.render_tbody() + '</tbody>';
             this.$el.html(tbl_html);
             this.$el.height(ret_obj.height);
+            this.trigger('render_finished');
             return this;
         },
 
@@ -703,8 +704,10 @@ define(['jquery',
 
         render_tbody: function(){
             var html = '<tbody>';  //tbody starts
+            var db_id;
             this.collection.each( function(r, i){
-                html += '<tr cid="' + r.cid + '" >'; // tr starts
+                db_id = r.get('id');
+                html += '<tr db_id="' + db_id  +'" cid="' + r.cid + '" >'; // tr starts
                 _.each(ret_obj.columns, function(value, key){
 
                     html += '<td field="' + key + '" class="' +

@@ -15,10 +15,18 @@
         <link rel="stylesheet" href="css/trackable_table/trackable_table.css">
 
         <link rel="stylesheet" href="css/bootstrap.min.css">
+        <style>
+          body {
+            padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+          }
+        </style>
+        <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+        
+        <link rel="stylesheet" href="js/vendor/google-code-prettify/prettify.css" />
 
         <script src="js/vendor/modernizr-2.6.1.min.js"></script>
 
-        <script data-main="js/bootup.js" src="js/vendor/require.js"></script>
+        
         <script>
             // var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
             // (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
@@ -26,11 +34,142 @@
             // s.parentNode.insertBefore(g,s)}(document,'script'));
         </script>        
     </head>
-    <body>
-        <div class="container">
-            <div class="dt_placeholder">
-            </div>
-        </div>
+    <body onload="prettyPrint()">
+    <a href="https://github.com/tly1980/trackable_table"><img style="position: fixed; top: 0; right: 0; border: 0; z-index:9999;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
 
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">Trackable Table</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#getting-started">Getting Started</a></li>
+              <li><a href="#demo">Demo Application</a></li>
+              <li><a href="https://github.com/tly1980/trackable_table">GitHub Repository</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="hero-unit">
+        <h1>Trackable Table</h1>
+        <p>An easy-to-use HTML Table, which allows you to track all your changes.</p>
+        <p>Build on top of the latest successful JS/HTML frameworks:</p>
+        <ul>
+            <li>Bootstraps</li>
+            <li>Backbone.js</li>
+            <li>jQuery</li>
+        </ul>
+        <p><a href="https://github.com/tly1980/trackable_table" class="btn btn-primary btn-large">Fork me on GitHub &gt;&gt;</a></p>
+      </div>
+
+      <section id="getting-started">
+        <h2>Getting Started</h2>
+        <p>
+            Think about that you wish to build a table with following Columns:<br/>
+            "Product Name", "Unit Price", "Buying Price", "Sold Count". </br>
+            Also, you have a REST api call product_info, and it provides JSON data in following format:
+        </p>
+
+        <pre class="prettyprint lang-json">
+[
+    {   
+        "id": 1
+        "name": "Cloth A",
+        "unit_price": "10.00",
+        "buying_price": "5.00",
+        "sold_count": 30
+    },
+    {
+        "id": 2
+        "name": "Cloth B",
+        "unit_price": "15.00",
+        "buying_price": "8.00",
+        "sold_count": 120
+    },
+    {
+        "id": 3,
+        "name": "Shoe C",
+        "unit_price": "50.00",
+        "buying_price": "35.00",
+        "sold_count ": 47.
+    },
+    ...,
+]
+        </pre>
+
+        <p >
+            What you can do is: either do a few coding to generate the table, or use Trackable Table with some easy configuration. Please be noticed, only the "text" field is mandatory, it is smart enough to fall back to the default parameters if they are not provided in the configuration.
+        </p>
+
+        <h4>Code: Preparation-Part </h4>
+        <pre class="prettyprint linenums lang-js">
+// this will load up the data from the url you have configure.
+        widget.fetch();
+widget.init({
+    name:   {text: 'Product Name',
+            changeable:true,
+            width: '55%'},
+
+    unit_price: {
+            text: 'Unit Price', 
+            tpl: '${{val}}', 
+            width:'15%'},
+
+    buying_price: { 
+            text: 'Buying Price',
+            tpl: '${{val}}',
+            changeable: true,
+            width:'15%',
+            rule:/^\d+[\.]{1}\d{2}$/,
+            tips: 'Please input number with two digits after decimal point. e.g. 23.58.'},
+
+    sold_count: {
+        text: 'Sold Count',
+        changeable:true,
+        width:'15%',
+        rule:/^\d+$/,
+        tips: 'Please input integer only. e.g. 15.'}
+    },
+
+    'product_info' // REST-api url to get the table data.
+);
+
+// append the element to where you wish to display;
+$('div.dt_placeholder').append(
+    widget.layout_view.$el);
+        </pre>                
+
+    <h4>Code: Fetch the data </h4>
+    <pre class="prettyprint linenums lang-js">
+    // this will load up the data from the url you have configure.
+widget.fetch();
+    </pre>
+  </section>
+
+  <section id="demo">
+    <h2>Demo Application</h2>
+      <div class="dt_placeholder">
+      </div>
+
+       <hr>
+
+       <footer>
+            <p>&copy; Tom Tang 2012</p>
+       </footer>
+    </div>
+
+    <script type="text/javascript" src="js/vendor/google-code-prettify/prettify.js"></script>
+    <script data-main="js/bootup.js" src="js/vendor/require.js"></script>
     </body>
+  </section>
 </html>
