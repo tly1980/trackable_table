@@ -3,10 +3,17 @@
 // Configure loading modules from the lib directory,
 // except for 'app' ones, which are in a sibling
 // directory.
+require.config({
+    shim: {
+        'backbone':   ['underscore', 'jquery']
+    }
+});
+
+
 requirejs.config({
     baseUrl: 'js/vendor',
     paths: {
-        jquery: 'jquery',
+        jquery: ['jquery-1.8.2.min'],
         underscore: 'underscore',
         backbone: 'backbone',
         text: 'text',

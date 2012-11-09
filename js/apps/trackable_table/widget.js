@@ -1,6 +1,17 @@
 require.config({
+    paths: {
+        'bootstrap':'bootstrap.min'
+    },
+
     shim: {
-        './libs/bootstrap':   ['underscore', 'jquery']
+        jquery: {
+            exports: "$"
+        },
+
+        bootstrap: {
+            deps: ['jquery'],
+            exports: "bootstrap"
+        }
     }
 });
 
@@ -9,7 +20,7 @@ define(['jquery',
         'backbone',
         'mustache',
         'text!./templates/tpl.json',
-        './libs/bootstrap'],
+        'bootstrap'],
     function ($, _, Backbone, Mustache, tpl, bootstrap) {
 
     var ret_obj = {

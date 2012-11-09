@@ -1,7 +1,24 @@
+require.config({
+    paths: {
+        'bootstrap':'bootstrap.min'
+    },
+
+    shim: {
+        jquery: {
+            exports: "$"
+        },
+
+        bootstrap: {
+            deps: ['jquery'],
+            exports: "bootstrap"
+        }
+    }
+});
+
 define(['jquery',
         'underscore',
         'backbone',
-        './libs/bootstrap'],
+        'bootstrap'],
 function ($, _, Backbone, bootstrap) {
     var ret_obj = {
 
