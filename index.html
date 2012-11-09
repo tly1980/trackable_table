@@ -113,16 +113,14 @@
 
         <h4>Code: Preparation-Part </h4>
         <pre class="prettyprint linenums lang-js">
-// this will load up the data from the url you have configure.
-        widget.fetch();
 widget.init({
-    name:   {text: 'Product Name',
-            changeable:true,
-            width: '55%'},
+    name:   {text: 'Product Name', // text in th
+            changeable:true,    // user can change it
+            width: '55%'},  // width
 
     unit_price: {
             text: 'Unit Price', 
-            tpl: '${{val}}', 
+            tpl: '${{val}}',   // how would you like to display the value in td.
             width:'15%'},
 
     buying_price: { 
@@ -130,8 +128,9 @@ widget.init({
             tpl: '${{val}}',
             changeable: true,
             width:'15%',
-            rule:/^\d+[\.]{1}\d{2}$/,
-            tips: 'Please input number with two digits after decimal point. e.g. 23.58.'},
+            rule:/^\d+[\.]{1}\d{2}$/,  // rule to verify the user input
+            tips: 'Please input number with two digits after decimal point. e.g. 23.58.'}, 
+            // pop up tips when the verification is not passing
 
     sold_count: {
         text: 'Sold Count',
