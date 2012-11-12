@@ -10,7 +10,9 @@ requirejs.config({
         jquery: ['//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min', 'jquery-1.8.2.min'],
         underscore: 'underscore',
         backbone: 'backbone',
-        bootstrap: ['//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.1/bootstrap.min', 'bootstrap.min'],
+        bootstrap: [ 'bootstrap.min',
+                    // don't know why, the cdnjs version is not placing the pop over properly
+                    '//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.1/bootstrap.min'],
         text: 'text',
         apps:'../apps',
         mustache: 'mustache'
