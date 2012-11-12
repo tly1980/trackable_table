@@ -8,10 +8,12 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
         <title></title>
         <meta name="description" content="">
-        <meta name="viewport" content="width=device-width">
-
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!--
         <link rel="stylesheet" href="css/normalize.min.css">
+    
         <link rel="stylesheet" href="css/main.css">
+        -->
         <link rel="stylesheet" href="css/trackable_table/trackable_table.css">
 
         <link rel="stylesheet" href="css/bootstrap.min.css">
@@ -70,6 +72,19 @@
             <li>jQuery</li>
         </ul>
         <p><a href="https://github.com/tly1980/trackable_table" class="btn btn-primary btn-large">Fork me on GitHub &gt;&gt;</a></p>
+
+        <!-- Place this tag where you want the +1 button to render. -->
+<div class="g-plusone" data-annotation="inline" data-width="300"></div>
+
+<!-- Place this tag after the last +1 button tag. -->
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+
       </div>
 
       <section id="getting-started">
@@ -148,24 +163,24 @@ $('div.dt_placeholder').append(
     widget.layout_view.$el);
         </pre>                
 
-    <h4>Code: Fetch the data </h4>
-    <pre class="prettyprint linenums lang-js">
-    // this will load up the data from the url you have configure.
-widget.fetch();
-    </pre>
+        <h4>Code: Fetch the data </h4>
+        <pre class="prettyprint linenums lang-js">
+        // this will load up the data from the url you have configure.
+    widget.fetch();
+        </pre>
   </section>
 
   <section id="demo">
     <h2>Demo Application</h2>
       <div class="dt_placeholder">
       </div>
+    </section>
 
-       <hr>
-
-       <footer>
-            <p>&copy; Tom Tang 2012</p>
-       </footer>
-    </div>
+    <hr>
+    <footer>
+        <p>&copy; Tom Tang 2012</p>
+    </footer>
+</div>
 
     <script type="text/javascript" src="js/vendor/google-code-prettify/prettify.js"></script>
     <script data-main="js/bootup.js" src="js/vendor/require.js"></script>

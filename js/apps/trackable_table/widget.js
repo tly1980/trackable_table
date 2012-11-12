@@ -1,20 +1,3 @@
-require.config({
-    paths: {
-        'bootstrap':'bootstrap.min'
-    },
-
-    shim: {
-        jquery: {
-            exports: "$"
-        },
-
-        bootstrap: {
-            deps: ['jquery'],
-            exports: "bootstrap"
-        }
-    }
-});
-
 define(['jquery',
         'underscore',
         'backbone',

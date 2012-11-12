@@ -3,22 +3,28 @@
 // Configure loading modules from the lib directory,
 // except for 'app' ones, which are in a sibling
 // directory.
-require.config({
-    shim: {
-        'backbone':   ['underscore', 'jquery']
-    }
-});
-
 
 requirejs.config({
     baseUrl: 'js/vendor',
     paths: {
-        jquery: ['jquery-1.8.2.min'],
+        jquery: ['//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min', 'jquery-1.8.2.min'],
         underscore: 'underscore',
         backbone: 'backbone',
+        bootstrap: ['//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.1/bootstrap.min', 'bootstrap.min'],
         text: 'text',
         apps:'../apps',
         mustache: 'mustache'
+    },
+
+    shim:{
+        backbone: ['underscore', 'jquery'],
+        jquery: {
+            exports: "$"
+        },
+        bootstrap: {
+            deps: ['jquery'],
+            exports: "bootstrap"
+        }
     }
 });
 
