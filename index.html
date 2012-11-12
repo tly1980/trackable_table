@@ -21,6 +21,10 @@
           body {
             padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
           }
+          section {
+            padding-top: 35px; /* 60px to make the container go all the way to the bottom of the topbar */
+          }
+
         </style>
         <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
         
@@ -37,7 +41,7 @@
         </script>        
     </head>
     <body onload="prettyPrint()">
-    <a href="https://github.com/tly1980/trackable_table"><img style="position: fixed; top: 0; right: 0; border: 0; z-index:9999;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
+    <a href="https://github.com/tly1980/trackable_table"><img style="position: fixed; top: 0; left: 0; border: 0; z-index:9999;" src="https://s3.amazonaws.com/github/ribbons/forkme_left_orange_ff7600.png" alt="Fork me on GitHub"></a>
 
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
@@ -51,8 +55,8 @@
           <div class="nav-collapse collapse">
             <ul class="nav">
               <li class="active"><a href="#">Home</a></li>
-              <li><a href="#getting-started">Getting Started</a></li>
               <li><a href="#demo">Demo Application</a></li>
+              <li><a href="#getting-started">Getting Started</a></li>
               <li><a href="https://github.com/tly1980/trackable_table">GitHub Repository</a></li>
             </ul>
           </div><!--/.nav-collapse -->
@@ -87,7 +91,14 @@
 
       </div>
 
-      <section id="getting-started">
+    <section id="demo">
+        <h2>Demo Application</h2>
+        <div class="dt_placeholder">
+        </div>
+    </section>
+
+    <hr>
+    <section id="getting-started">
         <h2>Getting Started</h2>
         <p>
             Think about that you wish to build a table with following Columns:<br/>
@@ -169,13 +180,6 @@ $('div.dt_placeholder').append(
     widget.fetch();
         </pre>
   </section>
-
-  <section id="demo">
-    <h2>Demo Application</h2>
-      <div class="dt_placeholder">
-      </div>
-    </section>
-
     <hr>
     <footer>
         <p>&copy; Tom Tang 2012</p>
