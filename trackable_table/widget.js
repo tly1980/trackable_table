@@ -261,6 +261,7 @@ define(['jquery',
             var html = Mustache.render(
                 ret_obj.tpl.confirm_dlg, this.model.toJSON() ) ;
             this.$el.html(html);
+            this.$('a').removeAttr('href'); //remove the annoying # that make the pages jumping around.
         },
 
         click_ok: function(){
