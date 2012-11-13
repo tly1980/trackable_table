@@ -255,6 +255,7 @@ define(['jquery',
             var html = Mustache.render(
                 ret_obj.tpl.confirm_dlg, this.model.toJSON() ) ;
             this.$el.html(html);
+            this.$('a').removeAttr('href');
         },
 
         click_ok: function(){
